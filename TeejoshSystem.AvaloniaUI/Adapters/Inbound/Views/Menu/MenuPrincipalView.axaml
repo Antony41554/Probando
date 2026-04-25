@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Menu"
+             x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Menu.MenuPrincipalView"
+             x:DataType="vm:MenuPrincipalViewModel">
+
+	<StackPanel Margin="20" Spacing="15">
+		<TextBlock Text="Menú Principal" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+
+		<Button Content="Ver Inventario" Command="{Binding VisualizarInventarioCommand}"
+                Width="200" HorizontalAlignment="Center" Margin="0,10"/>
+
+		<Button Content="Gestionar Productos" Command="{Binding ModificarProductoCommand}" 
+                Width="200" HorizontalAlignment="Center"/>
+
+		<Button Content="Añadir Producto" Command="{Binding AnadirProductoCommand}" 
+                Width="200" HorizontalAlignment="Center"/>
+	</StackPanel>
+</UserControl>

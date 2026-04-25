@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"
+             x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos.EditarProductoView"
+             x:DataType="vm:EditarProductoViewModel">
+
+	<Grid RowDefinitions="Auto,*,Auto">
+
+		<!-- Header -->
+		<Border Grid.Row="0" Background="#FF9800" Padding="24,16">
+			<TextBlock Text="Editar Producto"
+                       FontSize="20" FontWeight="SemiBold"
+                       Foreground="White" VerticalAlignment="Center"/>
+		</Border>
+
+		<!-- Formulario -->
+		<Border Grid.Row="1" Margin="16" Background="White" CornerRadius="4">
+			<StackPanel Margin="24" Spacing="16">
+				<TextBlock Text="Datos del Producto"
+                           FontSize="16" FontWeight="SemiBold"/>
+
+				<StackPanel Spacing="4">
+					<TextBlock Text="Nombre"/>
+					<TextBox Text="{Binding Nombre}"
+                             Watermark="Nombre del producto"/>
+				</StackPanel>
+
+				<StackPanel Spacing="4">
+					<TextBlock Text="Precio"/>
+					<NumericUpDown Value="{Binding Precio}"
+                                   Minimum="0"
+                                   FormatString="F2"
+                                   Increment="0.5"/>
+				</StackPanel>
+
+				<StackPanel Spacing="4">
+					<TextBlock Text="Unidades en stock"/>
+					<NumericUpDown Value="{Binding Unidades}"
+                                   Minimum="0"
+                                   Increment="1"
+                                   FormatString="F0"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<!-- Footer -->
+		<Border Grid.Row="2" Margin="16,0,16,16" Background="White" Padding="16">
+			<Grid ColumnDefinitions="*,Auto,8,Auto">
+				<Button Grid.Column="1"
+                        Command="{Binding GuardarCommand}"
+                        Content="Guardar"
+                        Background="#FF9800"
+                        Foreground="White"
+                        Height="40" Padding="24,0"/>
+
+				<Button Grid.Column="3"
+                        Command="{Binding VolverCommand}"
+                        Content="Cancelar"
+                        Height="40" Padding="24,0"/>
+			</Grid>
+		</Border>
+
+		<!-- Loading Overlay -->
+		<Border Grid.RowSpan="3"
+                Background="#CC000000"
+                IsVisible="{Binding IsBusy}">
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+				<ProgressBar IsIndeterminate="True"
+                             Width="64" Height="64"
+                             Margin="0,0,0,16"/>
+				<TextBlock Text="Guardando..."
+                           FontSize="16" Foreground="White"
+                           HorizontalAlignment="Center"/>
+			</StackPanel>
+		</Border>
+	</Grid>
+</UserControl>
