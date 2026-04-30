@@ -48,6 +48,7 @@ public partial class App : Avalonia.Application
                 services.AddSingleton<NavigationService>();
                 services.AddSingleton<INavigationService>(sp =>
                     sp.GetRequiredService<NavigationService>());
+                services.AddSingleton<IThemeService, ThemeService>();
 
                 // ViewModels
                 services.AddSingleton<MainViewModel>();
@@ -66,7 +67,7 @@ public partial class App : Avalonia.Application
             db.Database.Migrate();
         }
 
-        // Configurar navegación
+        // Configurar navegaciï¿½n
         var navService = _host.Services.GetRequiredService<NavigationService>();
         var mainVm = _host.Services.GetRequiredService<MainViewModel>();
 
@@ -75,7 +76,7 @@ public partial class App : Avalonia.Application
             () => mainVm.CurrentView = _host.Services.GetRequiredService<MenuPrincipalViewModel>()
         );
 
-        // Navegar al menú inicial
+        // Navegar al menï¿½ inicial
         mainVm.CurrentView = _host.Services.GetRequiredService<MenuPrincipalViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

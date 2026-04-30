@@ -24,19 +24,14 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
     // ─── Propiedades del formulario ───────────────────────────────────────
 
-    [ObservableProperty]
-    private string? _nombre;
+    [ObservableProperty] private string? _nombre;
+    [ObservableProperty] private decimal _precio;
+    [ObservableProperty] private int _unidades;
 
-    [ObservableProperty]
-    private decimal _precio;
+    // ─── Errores bindeables ───────────────────────────────────────────────
 
-    [ObservableProperty]
-    private int _unidades;
-
-    // ─── Propiedades de error bindeables ──────────────────────────────────
-
-    public string? NombreError   => GetFirstError(nameof(Nombre));
-    public string? PrecioError   => GetFirstError(nameof(Precio));
+    public string? NombreError => GetFirstError(nameof(Nombre));
+    public string? PrecioError => GetFirstError(nameof(Precio));
     public string? UnidadesError => GetFirstError(nameof(Unidades));
 
     // ─── Constructor ──────────────────────────────────────────────────────
@@ -50,16 +45,15 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
         int productoId,
         TipoProducto tipo)
     {
-        _mediator     = mediator;
+        _mediator = mediator;
         _notification = notification;
         _confirmation = confirmation;
-        _navigation   = navigation;
-        _gestionarVm  = gestionarVm;
-        _productoId   = productoId;
-        _tipo         = tipo;
+        _navigation = navigation;
+        _gestionarVm = gestionarVm;
+        _productoId = productoId;
+        _tipo = tipo;
 
         ErrorsChanged += (_, _) => GuardarCommand.NotifyCanExecuteChanged();
-
         PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(IsBusy))
@@ -69,7 +63,62 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
     public void OnLoaded()
     {
-        // Se implementará cuando exista ObtenerProductoPorIdQuery
+        // Pendiente: implementar cuando exista ObtenerProductoPorIdQuery
+    }
+
+    // ─── Validación: limpiar al escribir, validar al salir del campo ──────
+
+    /// <summary>
+    /// Invocado desde EventTriggerBehavior (LostFocus) en cada campo del XAML.
+    /// </summary>
+    [RelayCommand]
+    private void ValidarCampo(string campo)
+    {
+        switch (campo)
+        {
+            case nameof(Nombre):
+                ClearErrors(nameof(Nombre));
+                if (string.IsNullOrWhiteSpace(Nombre))
+                    AddError(nameof(Nombre), "*Nombre inválido.");
+                else if (Nombre.Length > 100)
+                    AddError(nameof(Nombre), "*El nombre no puede superar los 100 caracteres.");
+                OnPropertyChanged(nameof(NombreError));
+                break;
+
+            case nameof(Precio):
+                ClearErrors(nameof(Precio));
+                if (Precio < 0)
+                    AddError(nameof(Precio), "*Precio inválido.");
+                OnPropertyChanged(nameof(PrecioError));
+                break;
+
+            case nameof(Unidades):
+                ClearErrors(nameof(Unidades));
+                if (Unidades < 0)
+                    AddError(nameof(Unidades), "*Unidades inválidas.");
+                OnPropertyChanged(nameof(UnidadesError));
+                break;
+        }
+    }
+
+    // OnXxxChanged solo limpia — error desaparece en cuanto el usuario empieza a corregir
+
+    partial void OnNombreChanged(string? value)
+    {
+        ClearErrors(nameof(Nombre));
+        OnPropertyChanged(nameof(NombreError));
+    }
+
+    partial void OnPrecioChanged(decimal value)
+    {
+        ClearErrors(nameof(Precio));
+        OnPropertyChanged(nameof(PrecioError));
+    }
+
+    partial void OnUnidadesChanged(int value)
+    {
+        ClearErrors(nameof(Unidades));
+        OnPropertyChanged(nameof(UnidadesError));
     }
 
     // ─── Comandos ─────────────────────────────────────────────────────────
@@ -116,38 +165,4 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     }
 
     private bool CanGuardar() => !HasErrors && !IsBusy;
-
-    // ─── Validaciones con notificación de error bindeable ─────────────────
-
-    partial void OnNombreChanged(string? value)
-    {
-        ClearErrors(nameof(Nombre));
-
-        if (string.IsNullOrWhiteSpace(value))
-            AddError(nameof(Nombre), "El nombre es obligatorio.");
-        else if (value.Length > 50)
-            AddError(nameof(Nombre), "Máximo 50 caracteres.");
-
-        OnPropertyChanged(nameof(NombreError));
-    }
-
-    partial void OnPrecioChanged(decimal value)
-    {
-        ClearErrors(nameof(Precio));
-
-        if (value < 0)
-            AddError(nameof(Precio), "El precio no puede ser negativo.");
-
-        OnPropertyChanged(nameof(PrecioError));
-    }
-
-    partial void OnUnidadesChanged(int value)
-    {
-        ClearErrors(nameof(Unidades));
-
-        if (value < 0)
-            AddError(nameof(Unidades), "Las unidades no pueden ser negativas.");
-
-        OnPropertyChanged(nameof(UnidadesError));
-    }
 }

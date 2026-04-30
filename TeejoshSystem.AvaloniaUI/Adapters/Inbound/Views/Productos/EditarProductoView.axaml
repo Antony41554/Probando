@@ -1,5 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Interaction="using:Avalonia.Xaml.Interactivity"
+             xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
              xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"
              x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos.EditarProductoView"
              x:DataType="vm:EditarProductoViewModel">
@@ -21,7 +23,14 @@
                 <StackPanel Spacing="4">
                     <TextBlock Classes="FieldLabel" Text="Nombre"/>
                     <TextBox Text="{Binding Nombre}"
-                             Watermark="Nombre del producto"/>
+                             Watermark="Nombre del producto">
+                        <Interaction.Behaviors>
+                            <ia:EventTriggerBehavior EventName="LostFocus">
+                                <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
+                                                        CommandParameter="Nombre"/>
+                            </ia:EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                    </TextBox>
                     <TextBlock Classes="ValidationError"
                                Text="{Binding NombreError}"
                                IsVisible="{Binding NombreError,
@@ -34,7 +43,14 @@
                     <NumericUpDown Value="{Binding Precio}"
                                    Minimum="0"
                                    FormatString="F2"
-                                   Increment="0.5"/>
+                                   Increment="0.5">
+                        <Interaction.Behaviors>
+                            <ia:EventTriggerBehavior EventName="LostFocus">
+                                <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
+                                                        CommandParameter="Precio"/>
+                            </ia:EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                    </NumericUpDown>
                     <TextBlock Classes="ValidationError"
                                Text="{Binding PrecioError}"
                                IsVisible="{Binding PrecioError,
@@ -47,7 +63,14 @@
                     <NumericUpDown Value="{Binding Unidades}"
                                    Minimum="0"
                                    Increment="1"
-                                   FormatString="F0"/>
+                                   FormatString="F0">
+                        <Interaction.Behaviors>
+                            <ia:EventTriggerBehavior EventName="LostFocus">
+                                <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
+                                                        CommandParameter="Unidades"/>
+                            </ia:EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                    </NumericUpDown>
                     <TextBlock Classes="ValidationError"
                                Text="{Binding UnidadesError}"
                                IsVisible="{Binding UnidadesError,
@@ -64,7 +87,6 @@
                         Classes="BrandButton"
                         Command="{Binding GuardarCommand}"
                         Content="Guardar"/>
-
                 <Button Grid.Column="3"
                         Classes="StandardButton"
                         Command="{Binding VolverCommand}"
@@ -77,9 +99,7 @@
                 Classes="LoadingOverlay"
                 IsVisible="{Binding IsBusy}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ProgressBar IsIndeterminate="True"
-                             Width="64" Height="64"
-                             Margin="0,0,0,16"/>
+                <ProgressBar IsIndeterminate="True" Width="64" Height="64" Margin="0,0,0,16"/>
                 <TextBlock Text="Guardando..."
                            FontSize="16"
                            Foreground="White"

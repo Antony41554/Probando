@@ -23,24 +23,15 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     private readonly IConfirmationService _confirmation;
     private readonly INavigationService _navigation;
 
-    // ─── Propiedades comunes ───────────────────────────────────────────────
+    // ─── Campos comunes ───────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private string? _nombre;
+    [ObservableProperty] private string? _nombre;
+    [ObservableProperty] private decimal _precio;
+    [ObservableProperty] private int _unidades;
+    [ObservableProperty] private TipoProductoFiltroItem? _tipoSeleccionado;
+    [ObservableProperty] private bool _catalogosCargados;
 
-    [ObservableProperty]
-    private decimal _precio;
-
-    [ObservableProperty]
-    private int _unidades;
-
-    [ObservableProperty]
-    private TipoProductoFiltroItem? _tipoSeleccionado;
-
-    [ObservableProperty]
-    private bool _catalogosCargados;
-
-    // ─── Propiedades de error bindeables ──────────────────────────────────
+    // ─── Errores bindeables ───────────────────────────────────────────────
 
     public string? NombreError => GetFirstError(nameof(Nombre));
     public string? PrecioError => GetFirstError(nameof(Precio));
@@ -48,47 +39,28 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
     // ─── Hot Wheels ───────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private string? _hwModelo;
-
-    [ObservableProperty]
-    private int _hwAnio = DateTime.Now.Year;
-
-    [ObservableProperty]
-    private string? _hwSerie;
-
-    [ObservableProperty]
-    private CatalogoItemDto? _hwCategoriaSeleccionada;
+    [ObservableProperty] private string? _hwModelo;
+    [ObservableProperty] private int _hwAnio = DateTime.Now.Year;
+    [ObservableProperty] private string? _hwSerie;
+    [ObservableProperty] private CatalogoItemDto? _hwCategoriaSeleccionada;
 
     public ObservableCollection<CatalogoItemDto> CategoriasHotWheels { get; } = new();
 
     // ─── Funko ────────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private int _funkoNumeroBox;
-
-    [ObservableProperty]
-    private string? _funkoLicencia;
-
-    [ObservableProperty]
-    private CatalogoItemDto? _funkoSubtipoSeleccionado;
-
-    [ObservableProperty]
-    private CatalogoItemDto? _funkoCaracteristicaSeleccionada;
+    [ObservableProperty] private int _funkoNumeroBox;
+    [ObservableProperty] private string? _funkoLicencia;
+    [ObservableProperty] private CatalogoItemDto? _funkoSubtipoSeleccionado;
+    [ObservableProperty] private CatalogoItemDto? _funkoCaracteristicaSeleccionada;
 
     public ObservableCollection<CatalogoItemDto> SubtiposFunko { get; } = new();
     public ObservableCollection<CatalogoItemDto> CaracteristicasFunko { get; } = new();
 
     // ─── TCG ──────────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private CatalogoItemDto? _tcgFranquiciaSeleccionada;
-
-    [ObservableProperty]
-    private CatalogoItemDto? _tcgExpansionSeleccionada;
-
-    [ObservableProperty]
-    private CatalogoItemDto? _tcgPackSeleccionado;
+    [ObservableProperty] private CatalogoItemDto? _tcgFranquiciaSeleccionada;
+    [ObservableProperty] private CatalogoItemDto? _tcgExpansionSeleccionada;
+    [ObservableProperty] private CatalogoItemDto? _tcgPackSeleccionado;
 
     public ObservableCollection<CatalogoItemDto> FranquiciasTcg { get; } = new();
     public ObservableCollection<CatalogoItemDto> TcgExpansionesDisponibles { get; } = new();
@@ -96,37 +68,19 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
     // ─── Toy ──────────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private int _toyEdadMinima;
-
-    [ObservableProperty]
-    private int _toyJugadoresMin = 1;
-
-    [ObservableProperty]
-    private int _toyJugadoresMax = 1;
-
-    [ObservableProperty]
-    private bool _toyEsJuegoMesa;
+    [ObservableProperty] private int _toyEdadMinima;
+    [ObservableProperty] private int _toyJugadoresMin = 1;
+    [ObservableProperty] private int _toyJugadoresMax = 1;
+    [ObservableProperty] private bool _toyEsJuegoMesa;
 
     // ─── Varios ───────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private string? _variosMarca;
-
-    [ObservableProperty]
-    private decimal _variosAlto;
-
-    [ObservableProperty]
-    private decimal _variosAncho;
-
-    [ObservableProperty]
-    private decimal? _variosLargo;
-
-    [ObservableProperty]
-    private string? _variosMaterial;
-
-    [ObservableProperty]
-    private bool _variosTieneIlustracion;
+    [ObservableProperty] private string? _variosMarca;
+    [ObservableProperty] private decimal _variosAlto;
+    [ObservableProperty] private decimal _variosAncho;
+    [ObservableProperty] private decimal? _variosLargo;
+    [ObservableProperty] private string? _variosMaterial;
+    [ObservableProperty] private bool _variosTieneIlustracion;
 
     // ─── Visibilidad de paneles ───────────────────────────────────────────
 
@@ -161,44 +115,16 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         TipoSeleccionado = TiposDisponibles[0];
 
         ErrorsChanged += (_, _) => GuardarCommand.NotifyCanExecuteChanged();
-
         PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(IsBusy) ||
-                e.PropertyName == nameof(CatalogosCargados))
+            if (e.PropertyName is nameof(IsBusy) or nameof(CatalogosCargados))
                 GuardarCommand.NotifyCanExecuteChanged();
         };
 
         _ = CargarCatalogosAsync();
     }
 
-    // ─── Carga de catálogos ───────────────────────────────────────────────
-
-    private async Task CargarCatalogosAsync()
-    {
-        try
-        {
-            IsBusy = true;
-            var catalogos = await _mediator.Send(new ObtenerCatalogosQuery());
-
-            foreach (var cat in catalogos.CategoriasHotWheels) CategoriasHotWheels.Add(cat);
-            foreach (var sub in catalogos.SubtiposFunko)       SubtiposFunko.Add(sub);
-            foreach (var car in catalogos.CaracteristicasFunko) CaracteristicasFunko.Add(car);
-            foreach (var fra in catalogos.FranquiciasTcg)       FranquiciasTcg.Add(fra);
-
-            CatalogosCargados = true;
-        }
-        catch (Exception ex)
-        {
-            await _notification.ShowErrorAsync("Error al cargar catálogos: " + ex.Message);
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    // ─── Handlers de cambio de tipo / franquicia ──────────────────────────
+    // ─── Cambios de tipo / franquicia ─────────────────────────────────────
 
     partial void OnTipoSeleccionadoChanged(TipoProductoFiltroItem? value)
     {
@@ -220,6 +146,32 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         _ = CargarExpansionesYPacksAsync(value.Id);
     }
 
+    // ─── Carga de catálogos ───────────────────────────────────────────────
+
+    private async Task CargarCatalogosAsync()
+    {
+        try
+        {
+            IsBusy = true;
+            var catalogos = await _mediator.Send(new ObtenerCatalogosQuery());
+
+            foreach (var c in catalogos.CategoriasHotWheels) CategoriasHotWheels.Add(c);
+            foreach (var s in catalogos.SubtiposFunko) SubtiposFunko.Add(s);
+            foreach (var c in catalogos.CaracteristicasFunko) CaracteristicasFunko.Add(c);
+            foreach (var f in catalogos.FranquiciasTcg) FranquiciasTcg.Add(f);
+
+            CatalogosCargados = true;
+        }
+        catch (Exception ex)
+        {
+            await _notification.ShowErrorAsync("Error al cargar catálogos: " + ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private async Task CargarExpansionesYPacksAsync(int franquiciaId)
     {
         try
@@ -227,10 +179,10 @@ public partial class CrearProductoViewModel : ValidatableViewModel
             var result = await _mediator.Send(new ObtenerExpansionesYPacksQuery(franquiciaId));
 
             TcgExpansionesDisponibles.Clear();
-            foreach (var exp in result.Expansiones) TcgExpansionesDisponibles.Add(exp);
+            foreach (var e in result.Expansiones) TcgExpansionesDisponibles.Add(e);
 
             TcgPacksDisponibles.Clear();
-            foreach (var pack in result.Packs) TcgPacksDisponibles.Add(pack);
+            foreach (var p in result.Packs) TcgPacksDisponibles.Add(p);
         }
         catch (Exception ex)
         {
@@ -238,7 +190,63 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         }
     }
 
-    // ─── Comando Guardar ──────────────────────────────────────────────────
+    // ─── Validación: limpiar al escribir, validar al salir del campo ──────
+
+    /// <summary>
+    /// Invocado desde EventTriggerBehavior (LostFocus) en cada campo del XAML.
+    /// Recibe el nombre de la propiedad como CommandParameter.
+    /// </summary>
+    [RelayCommand]
+    private void ValidarCampo(string campo)
+    {
+        switch (campo)
+        {
+            case nameof(Nombre):
+                ClearErrors(nameof(Nombre));
+                if (string.IsNullOrWhiteSpace(Nombre))
+                    AddError(nameof(Nombre), "*Nombre inválido.");
+                else if (Nombre.Length > 100)
+                    AddError(nameof(Nombre), "*El nombre no puede superar los 100 caracteres.");
+                OnPropertyChanged(nameof(NombreError));
+                break;
+
+            case nameof(Precio):
+                ClearErrors(nameof(Precio));
+                if (Precio < 0)
+                    AddError(nameof(Precio), "*Precio inválido.");
+                OnPropertyChanged(nameof(PrecioError));
+                break;
+
+            case nameof(Unidades):
+                ClearErrors(nameof(Unidades));
+                if (Unidades < 0)
+                    AddError(nameof(Unidades), "*Unidades inválidas.");
+                OnPropertyChanged(nameof(UnidadesError));
+                break;
+        }
+    }
+
+    // OnXxxChanged solo limpia — el usuario ve el error desaparecer al empezar a corregir
+
+    partial void OnNombreChanged(string? value)
+    {
+        ClearErrors(nameof(Nombre));
+        OnPropertyChanged(nameof(NombreError));
+    }
+
+    partial void OnPrecioChanged(decimal value)
+    {
+        ClearErrors(nameof(Precio));
+        OnPropertyChanged(nameof(PrecioError));
+    }
+
+    partial void OnUnidadesChanged(int value)
+    {
+        ClearErrors(nameof(Unidades));
+        OnPropertyChanged(nameof(UnidadesError));
+    }
+
+    // ─── Guardar ──────────────────────────────────────────────────────────
 
     [RelayCommand(CanExecute = nameof(CanGuardar))]
     private async Task GuardarAsync()
@@ -270,6 +278,8 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         }
     }
 
+    private bool CanGuardar() => !HasErrors && !IsBusy && CatalogosCargados;
+
     private CrearProductoCommand ConstruirCommand() => new()
     {
         Nombre = Nombre!,
@@ -277,18 +287,18 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         Unidades = Unidades,
         Tipo = TipoSeleccionado!.Valor!.Value,
 
-        HotWheels = MostrarHotWheels && HwCategoriaSeleccionada != null
+        HotWheels = MostrarHotWheels && HwCategoriaSeleccionada is not null
             ? new CrearHotWheelsDetalleDto(HwModelo!, HwAnio, HwSerie!, HwCategoriaSeleccionada.Id)
             : null,
 
-        Funko = MostrarFunko && FunkoSubtipoSeleccionado != null
+        Funko = MostrarFunko && FunkoSubtipoSeleccionado is not null
             ? new CrearFunkoDetalleDto(
                 FunkoNumeroBox, FunkoLicencia!,
                 FunkoSubtipoSeleccionado.Id,
                 FunkoCaracteristicaSeleccionada?.Id)
             : null,
 
-        Tcg = MostrarTcg && TcgPackSeleccionado != null && TcgExpansionSeleccionada != null
+        Tcg = MostrarTcg && TcgPackSeleccionado is not null && TcgExpansionSeleccionada is not null
             ? new CrearTcgDetalleDto(TcgPackSeleccionado.Id, TcgExpansionSeleccionada.Id)
             : null,
 
@@ -305,40 +315,4 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
     [RelayCommand]
     private void Volver() => _navigation.NavigateToMenu();
-
-    private bool CanGuardar() => !HasErrors && !IsBusy && CatalogosCargados;
-
-    // ─── Validaciones con notificación de error bindeable ─────────────────
-
-    partial void OnNombreChanged(string? value)
-    {
-        ClearErrors(nameof(Nombre));
-
-        if (string.IsNullOrWhiteSpace(value))
-            AddError(nameof(Nombre), "El nombre es obligatorio.");
-        else if (value.Length > 50)
-            AddError(nameof(Nombre), "Máximo 50 caracteres.");
-
-        OnPropertyChanged(nameof(NombreError));
-    }
-
-    partial void OnPrecioChanged(decimal value)
-    {
-        ClearErrors(nameof(Precio));
-
-        if (value < 0)
-            AddError(nameof(Precio), "El precio no puede ser negativo.");
-
-        OnPropertyChanged(nameof(PrecioError));
-    }
-
-    partial void OnUnidadesChanged(int value)
-    {
-        ClearErrors(nameof(Unidades));
-
-        if (value < 0)
-            AddError(nameof(Unidades), "Las unidades no pueden ser negativas.");
-
-        OnPropertyChanged(nameof(UnidadesError));
-    }
 }
