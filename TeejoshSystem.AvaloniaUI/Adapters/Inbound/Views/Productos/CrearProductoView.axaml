@@ -1,287 +1,318 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Interaction="using:Avalonia.Xaml.Interactivity"
+             xmlns:behaviors="using:TeejoshSystem.AvaloniaUI.Adapters.Inbound.Behaviors"
              xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"
              x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos.CrearProductoView"
              x:DataType="vm:CrearProductoViewModel">
 
-	<Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
 
-		<!-- Header -->
-		<Border Grid.Row="0" Background="#FF9800" Padding="24,16">
-			<TextBlock Text="Crear Producto"
-                       FontSize="20" FontWeight="SemiBold"
-                       Foreground="White" VerticalAlignment="Center"/>
-		</Border>
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="PageHeader">
+            <TextBlock Text="Crear Producto"/>
+        </Border>
 
-		<!-- Formulario -->
-		<ScrollViewer Grid.Row="1" Margin="16">
-			<Border Background="White" CornerRadius="4">
-				<StackPanel Margin="24" Spacing="16">
+        <Border IsVisible="{Binding HasErrors}"
+                Background="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                CornerRadius="4"
+                Padding="12,8"
+                Margin="0,0,0,8"
+                Opacity="0.12">
+            <StackPanel>
+                <TextBlock Text="Corrige los siguientes errores antes de continuar:"
+                        FontWeight="SemiBold"
+                        Classes="ValidationError"/>
+                <ItemsControl ItemsSource="{Binding ResumenErrores}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Classes="ValidationError"
+                                    Text="{Binding}"
+                                    Margin="8,2,0,0"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
 
-					<!-- Datos comunes -->
-					<TextBlock Text="Datos Generales"
-                               FontSize="16" FontWeight="SemiBold"/>
+        <!-- Formulario -->
+        <ScrollViewer Grid.Row="1" Margin="16">
 
-					<StackPanel Spacing="4">
-						<TextBlock Text="Tipo de producto"/>
-						<ComboBox ItemsSource="{Binding TiposDisponibles}"
+            <Border Classes="ContentPanel">
+                <StackPanel Margin="24" Spacing="16">
+
+                    <!-- Datos comunes -->
+                    <TextBlock Classes="SectionTitle" Text="Datos Generales"/>
+
+                    <!-- Tipo -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Classes="FieldLabel" Text="Tipo de producto"/>
+                        <ComboBox ItemsSource="{Binding TiposDisponibles}"
                                   SelectedItem="{Binding TipoSeleccionado}"
                                   DisplayMemberBinding="{Binding Nombre}"
                                   HorizontalAlignment="Stretch"/>
-					</StackPanel>
+                    </StackPanel>
 
-					<StackPanel Spacing="4">
-						<TextBlock Text="Nombre"/>
-						<TextBox Text="{Binding Nombre}"
-                                 Watermark="Nombre del producto"/>
-					</StackPanel>
+                    <!-- Nombre -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Classes="FieldLabel" Text="Nombre"/>
 
-					<Grid ColumnDefinitions="*,16,*">
-						<StackPanel Grid.Column="0" Spacing="4">
-							<TextBlock Text="Precio"/>
-							<NumericUpDown Value="{Binding Precio}"
+                        <TextBox Text="{Binding Nombre}" Watermark="Nombre del producto">
+                            <Interaction.Behaviors>
+                                <behaviors:ValidateOnLostFocusBehavior/>
+                            </Interaction.Behaviors>
+                        </TextBox>
+
+                        <TextBlock Classes="ValidationError"
+                                Text="{Binding NombreError}"
+                                IsVisible="True"/>
+                    </StackPanel>
+
+                    <!-- Precio y Unidades -->
+                    <Grid ColumnDefinitions="*,16,*">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Classes="FieldLabel" Text="Precio"/>
+                            <NumericUpDown Value="{Binding Precio}"
                                            Minimum="0"
                                            FormatString="F2"
                                            Increment="0.5"/>
-						</StackPanel>
+                            <TextBlock Classes="ValidationError"
+                                       Text="{Binding PrecioError}"
+                                       IsVisible="{Binding PrecioError,
+                                                   Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                        </StackPanel>
 
-						<StackPanel Grid.Column="2" Spacing="4">
-							<TextBlock Text="Unidades"/>
-							<NumericUpDown Value="{Binding Unidades}"
+                        <StackPanel Grid.Column="2" Spacing="4">
+                            <TextBlock Classes="FieldLabel" Text="Unidades"/>
+                            <NumericUpDown Value="{Binding Unidades}"
                                            Minimum="0"
                                            Increment="1"
                                            FormatString="F0"/>
-						</StackPanel>
-					</Grid>
+                            <TextBlock Classes="ValidationError"
+                                       Text="{Binding UnidadesError}"
+                                       IsVisible="{Binding UnidadesError,
+                                                   Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                        </StackPanel>
+                    </Grid>
 
-					<!-- Panel Hot Wheels -->
-					<StackPanel Spacing="16"
-                                IsVisible="{Binding MostrarHotWheels}">
-						<TextBlock Text="Detalles Hot Wheels"
-                                   FontSize="16" FontWeight="SemiBold"/>
+                    <!-- ═══ Panel Hot Wheels ═══ -->
+                    <StackPanel Spacing="16" IsVisible="{Binding MostrarHotWheels}">
+                        <TextBlock Classes="SectionTitle" Text="Detalles Hot Wheels"/>
 
-						<StackPanel Spacing="4">
-							<TextBlock Text="Modelo"/>
-							<TextBox Text="{Binding HwModelo}"
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="FieldLabel" Text="Modelo"/>
+                            <TextBox Text="{Binding HwModelo}"
                                      Watermark="Ej: Ford Mustang"/>
-						</StackPanel>
+                        </StackPanel>
 
-						<Grid ColumnDefinitions="*,16,*">
-							<StackPanel Grid.Column="0" Spacing="4">
-								<TextBlock Text="Año"/>
-								<NumericUpDown Value="{Binding HwAnio}"
+                        <Grid ColumnDefinitions="*,16,*">
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Año"/>
+                                <NumericUpDown Value="{Binding HwAnio}"
                                                Minimum="1967"
                                                Increment="1"
                                                FormatString="F0"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="2" Spacing="4">
-								<TextBlock Text="Serie"/>
-								<TextBox Text="{Binding HwSerie}"
+                            <StackPanel Grid.Column="2" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Serie"/>
+                                <TextBox Text="{Binding HwSerie}"
                                          Watermark="Ej: HW Race Team"/>
-							</StackPanel>
-						</Grid>
+                            </StackPanel>
+                        </Grid>
 
-						<StackPanel Spacing="4">
-							<TextBlock Text="Categoría"/>
-							<ComboBox ItemsSource="{Binding CategoriasHotWheels}"
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="FieldLabel" Text="Categoría"/>
+                            <ComboBox ItemsSource="{Binding CategoriasHotWheels}"
                                       SelectedItem="{Binding HwCategoriaSeleccionada}"
                                       DisplayMemberBinding="{Binding Nombre}"
                                       HorizontalAlignment="Stretch"/>
-						</StackPanel>
-					</StackPanel>
+                        </StackPanel>
+                    </StackPanel>
 
-					<!-- Panel Funko -->
-					<StackPanel Spacing="16"
-                                IsVisible="{Binding MostrarFunko}">
-						<TextBlock Text="Detalles Funko"
-                                   FontSize="16" FontWeight="SemiBold"/>
+                    <!-- ═══ Panel Funko ═══ -->
+                    <StackPanel Spacing="16" IsVisible="{Binding MostrarFunko}">
+                        <TextBlock Classes="SectionTitle" Text="Detalles Funko"/>
 
-						<Grid ColumnDefinitions="*,16,*">
-							<StackPanel Grid.Column="0" Spacing="4">
-								<TextBlock Text="Número de caja"/>
-								<NumericUpDown Value="{Binding FunkoNumeroBox}"
+                        <Grid ColumnDefinitions="*,16,*">
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Número de caja"/>
+                                <NumericUpDown Value="{Binding FunkoNumeroBox}"
                                                Minimum="0"
                                                Increment="1"
                                                FormatString="F0"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="2" Spacing="4">
-								<TextBlock Text="Licencia"/>
-								<TextBox Text="{Binding FunkoLicencia}"
+                            <StackPanel Grid.Column="2" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Licencia"/>
+                                <TextBox Text="{Binding FunkoLicencia}"
                                          Watermark="Ej: Marvel"/>
-							</StackPanel>
-						</Grid>
+                            </StackPanel>
+                        </Grid>
 
-						<StackPanel Spacing="4">
-							<TextBlock Text="Subtipo"/>
-							<ComboBox ItemsSource="{Binding SubtiposFunko}"
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="FieldLabel" Text="Subtipo"/>
+                            <ComboBox ItemsSource="{Binding SubtiposFunko}"
                                       SelectedItem="{Binding FunkoSubtipoSeleccionado}"
                                       DisplayMemberBinding="{Binding Nombre}"
                                       HorizontalAlignment="Stretch"/>
-						</StackPanel>
+                        </StackPanel>
 
-						<StackPanel Spacing="4">
-							<TextBlock Text="Característica especial (opcional)"/>
-							<ComboBox ItemsSource="{Binding CaracteristicasFunko}"
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="FieldLabel" Text="Característica especial (opcional)"/>
+                            <ComboBox ItemsSource="{Binding CaracteristicasFunko}"
                                       SelectedItem="{Binding FunkoCaracteristicaSeleccionada}"
                                       DisplayMemberBinding="{Binding Nombre}"
                                       HorizontalAlignment="Stretch"/>
-						</StackPanel>
-					</StackPanel>
+                        </StackPanel>
+                    </StackPanel>
 
-					<!-- Panel TCG -->
-					<StackPanel Spacing="16"
-                                IsVisible="{Binding MostrarTcg}">
-						<TextBlock Text="Detalles TCG"
-                                   FontSize="16" FontWeight="SemiBold"/>
+                    <!-- ═══ Panel TCG ═══ -->
+                    <StackPanel Spacing="16" IsVisible="{Binding MostrarTcg}">
+                        <TextBlock Classes="SectionTitle" Text="Detalles TCG"/>
 
-						<StackPanel Spacing="4">
-							<TextBlock Text="Franquicia"/>
-							<ComboBox ItemsSource="{Binding FranquiciasTcg}"
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="FieldLabel" Text="Franquicia"/>
+                            <ComboBox ItemsSource="{Binding FranquiciasTcg}"
                                       SelectedItem="{Binding TcgFranquiciaSeleccionada}"
                                       DisplayMemberBinding="{Binding Nombre}"
                                       HorizontalAlignment="Stretch"/>
-						</StackPanel>
+                        </StackPanel>
 
-						<Grid ColumnDefinitions="*,16,*">
-							<StackPanel Grid.Column="0" Spacing="4">
-								<TextBlock Text="Expansión"/>
-								<ComboBox ItemsSource="{Binding TcgExpansionesDisponibles}"
+                        <Grid ColumnDefinitions="*,16,*">
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Expansión"/>
+                                <ComboBox ItemsSource="{Binding TcgExpansionesDisponibles}"
                                           SelectedItem="{Binding TcgExpansionSeleccionada}"
                                           DisplayMemberBinding="{Binding Nombre}"
                                           HorizontalAlignment="Stretch"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="2" Spacing="4">
-								<TextBlock Text="Pack"/>
-								<ComboBox ItemsSource="{Binding TcgPacksDisponibles}"
+                            <StackPanel Grid.Column="2" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Pack"/>
+                                <ComboBox ItemsSource="{Binding TcgPacksDisponibles}"
                                           SelectedItem="{Binding TcgPackSeleccionado}"
                                           DisplayMemberBinding="{Binding Nombre}"
                                           HorizontalAlignment="Stretch"/>
-							</StackPanel>
-						</Grid>
-					</StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
 
-					<!-- Panel Toy -->
-					<StackPanel Spacing="16"
-                                IsVisible="{Binding MostrarToy}">
-						<TextBlock Text="Detalles Toy"
-                                   FontSize="16" FontWeight="SemiBold"/>
+                    <!-- ═══ Panel Toy ═══ -->
+                    <StackPanel Spacing="16" IsVisible="{Binding MostrarToy}">
+                        <TextBlock Classes="SectionTitle" Text="Detalles Toy"/>
 
-						<Grid ColumnDefinitions="*,16,*,16,*">
-							<StackPanel Grid.Column="0" Spacing="4">
-								<TextBlock Text="Edad mínima"/>
-								<NumericUpDown Value="{Binding ToyEdadMinima}"
+                        <Grid ColumnDefinitions="*,16,*,16,*">
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Edad mínima"/>
+                                <NumericUpDown Value="{Binding ToyEdadMinima}"
                                                Minimum="0"
                                                Increment="1"
                                                FormatString="F0"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="2" Spacing="4">
-								<TextBlock Text="Jugadores mín."/>
-								<NumericUpDown Value="{Binding ToyJugadoresMin}"
+                            <StackPanel Grid.Column="2" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Jugadores mín."/>
+                                <NumericUpDown Value="{Binding ToyJugadoresMin}"
                                                Minimum="1"
                                                Increment="1"
                                                FormatString="F0"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="4" Spacing="4">
-								<TextBlock Text="Jugadores máx."/>
-								<NumericUpDown Value="{Binding ToyJugadoresMax}"
+                            <StackPanel Grid.Column="4" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Jugadores máx."/>
+                                <NumericUpDown Value="{Binding ToyJugadoresMax}"
                                                Minimum="1"
                                                Increment="1"
                                                FormatString="F0"/>
-							</StackPanel>
-						</Grid>
+                            </StackPanel>
+                        </Grid>
 
-						<CheckBox Content="Es juego de mesa"
+                        <CheckBox Content="Es juego de mesa"
                                   IsChecked="{Binding ToyEsJuegoMesa}"/>
-					</StackPanel>
+                    </StackPanel>
 
-					<!-- Panel Varios -->
-					<StackPanel Spacing="16"
-                                IsVisible="{Binding MostrarVarios}">
-						<TextBlock Text="Detalles Varios"
-                                   FontSize="16" FontWeight="SemiBold"/>
+                    <!-- ═══ Panel Varios ═══ -->
+                    <StackPanel Spacing="16" IsVisible="{Binding MostrarVarios}">
+                        <TextBlock Classes="SectionTitle" Text="Detalles Varios"/>
 
-						<Grid ColumnDefinitions="*,16,*">
-							<StackPanel Grid.Column="0" Spacing="4">
-								<TextBlock Text="Marca"/>
-								<TextBox Text="{Binding VariosMarca}"
+                        <Grid ColumnDefinitions="*,16,*">
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Marca"/>
+                                <TextBox Text="{Binding VariosMarca}"
                                          Watermark="Ej: LEGO"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="2" Spacing="4">
-								<TextBlock Text="Material"/>
-								<TextBox Text="{Binding VariosMaterial}"
+                            <StackPanel Grid.Column="2" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Material"/>
+                                <TextBox Text="{Binding VariosMaterial}"
                                          Watermark="Ej: Plástico"/>
-							</StackPanel>
-						</Grid>
+                            </StackPanel>
+                        </Grid>
 
-						<Grid ColumnDefinitions="*,16,*,16,*">
-							<StackPanel Grid.Column="0" Spacing="4">
-								<TextBlock Text="Alto (cm)"/>
-								<NumericUpDown Value="{Binding VariosAlto}"
+                        <Grid ColumnDefinitions="*,16,*,16,*">
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Alto (cm)"/>
+                                <NumericUpDown Value="{Binding VariosAlto}"
                                                Minimum="0"
                                                FormatString="F2"
                                                Increment="0.5"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="2" Spacing="4">
-								<TextBlock Text="Ancho (cm)"/>
-								<NumericUpDown Value="{Binding VariosAncho}"
+                            <StackPanel Grid.Column="2" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Ancho (cm)"/>
+                                <NumericUpDown Value="{Binding VariosAncho}"
                                                Minimum="0"
                                                FormatString="F2"
                                                Increment="0.5"/>
-							</StackPanel>
+                            </StackPanel>
 
-							<StackPanel Grid.Column="4" Spacing="4">
-								<TextBlock Text="Largo (cm) — opcional"/>
-								<NumericUpDown Value="{Binding VariosLargo}"
+                            <StackPanel Grid.Column="4" Spacing="4">
+                                <TextBlock Classes="FieldLabel" Text="Largo (cm) — opcional"/>
+                                <NumericUpDown Value="{Binding VariosLargo}"
                                                Minimum="0"
                                                FormatString="F2"
                                                Increment="0.5"/>
-							</StackPanel>
-						</Grid>
+                            </StackPanel>
+                        </Grid>
 
-						<CheckBox Content="Tiene ilustración"
+                        <CheckBox Content="Tiene ilustración"
                                   IsChecked="{Binding VariosTieneIlustracion}"/>
-					</StackPanel>
+                    </StackPanel>
 
-				</StackPanel>
-			</Border>
-		</ScrollViewer>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
 
-		<!-- Footer -->
-		<Border Grid.Row="2" Margin="16,0,16,16" Background="White" Padding="16">
-			<Grid ColumnDefinitions="*,Auto,8,Auto">
-				<Button Grid.Column="1"
+        <!-- Footer -->
+        <Border Grid.Row="2" Margin="16,0,16,16" Classes="FooterPanel">
+            <Grid ColumnDefinitions="*,Auto,8,Auto">
+                <Button Grid.Column="1"
+                        Classes="BrandButton"
                         Command="{Binding GuardarCommand}"
-                        Content="Crear Producto"
-                        Background="#FF9800"
-                        Foreground="White"
-                        Height="40" Padding="24,0"/>
+                        Content="Crear Producto"/>
 
-				<Button Grid.Column="3"
+                <Button Grid.Column="3"
+                        Classes="StandardButton"
                         Command="{Binding VolverCommand}"
-                        Content="Cancelar"
-                        Height="40" Padding="24,0"/>
-			</Grid>
-		</Border>
+                        Content="Cancelar"/>
+            </Grid>
+        </Border>
 
-		<!-- Loading Overlay -->
-		<Border Grid.RowSpan="3"
-                Background="#CC000000"
+        <!-- Loading Overlay -->
+        <Border Grid.RowSpan="3"
+                Classes="LoadingOverlay"
                 IsVisible="{Binding IsBusy}">
-			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-				<ProgressBar IsIndeterminate="True"
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True"
                              Width="64" Height="64"
                              Margin="0,0,0,16"/>
-				<TextBlock Text="Guardando..."
-                           FontSize="16" Foreground="White"
+                <TextBlock Text="Guardando..."
+                           FontSize="16"
+                           Foreground="White"
                            HorizontalAlignment="Center"/>
-			</StackPanel>
-		</Border>
-	</Grid>
+            </StackPanel>
+        </Border>
+
+    </Grid>
 </UserControl>

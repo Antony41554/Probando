@@ -1,10 +1,4 @@
 <Solution>
-  <Folder Name="/Tests/">
-    <Project Path="Tests/TeejoshSystem.Application.Tests/TeejoshSystem.Application.Tests.csproj" />
-    <Project Path="Tests/TeejoshSystem.AvaloniaUI.Tests/TeejoshSystem.AvaloniaUI.Tests.csproj" />
-    <Project Path="Tests/TeejoshSystem.Domain.Tests/TeejoshSystem.Domain.Tests.csproj" />
-    <Project Path="Tests/TeejoshSystem.Infrastructure.Tests/TeejoshSystem.Infrastructure.Tests.csproj" />
-  </Folder>
   <Project Path="TeejoshSystem.Application/TeejoshSystem.Application.csproj" />
   <Project Path="TeejoshSystem.AvaloniaUI/TeejoshSystem.AvaloniaUI.csproj" />
   <Project Path="TeejoshSystem.Domain/TeejoshSystem.Domain.csproj" />

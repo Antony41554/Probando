@@ -4,74 +4,88 @@
              x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos.EditarProductoView"
              x:DataType="vm:EditarProductoViewModel">
 
-	<Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
 
-		<!-- Header -->
-		<Border Grid.Row="0" Background="#FF9800" Padding="24,16">
-			<TextBlock Text="Editar Producto"
-                       FontSize="20" FontWeight="SemiBold"
-                       Foreground="White" VerticalAlignment="Center"/>
-		</Border>
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="PageHeader">
+            <TextBlock Text="Editar Producto"/>
+        </Border>
 
-		<!-- Formulario -->
-		<Border Grid.Row="1" Margin="16" Background="White" CornerRadius="4">
-			<StackPanel Margin="24" Spacing="16">
-				<TextBlock Text="Datos del Producto"
-                           FontSize="16" FontWeight="SemiBold"/>
+        <!-- Formulario -->
+        <Border Grid.Row="1" Margin="16" Classes="ContentPanel">
+            <StackPanel Margin="24" Spacing="16">
 
-				<StackPanel Spacing="4">
-					<TextBlock Text="Nombre"/>
-					<TextBox Text="{Binding Nombre}"
+                <TextBlock Classes="SectionTitle" Text="Datos del Producto"/>
+
+                <!-- Nombre -->
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="FieldLabel" Text="Nombre"/>
+                    <TextBox Text="{Binding Nombre}"
                              Watermark="Nombre del producto"/>
-				</StackPanel>
+                    <TextBlock Classes="ValidationError"
+                               Text="{Binding NombreError}"
+                               IsVisible="{Binding NombreError,
+                                           Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                </StackPanel>
 
-				<StackPanel Spacing="4">
-					<TextBlock Text="Precio"/>
-					<NumericUpDown Value="{Binding Precio}"
+                <!-- Precio -->
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="FieldLabel" Text="Precio"/>
+                    <NumericUpDown Value="{Binding Precio}"
                                    Minimum="0"
                                    FormatString="F2"
                                    Increment="0.5"/>
-				</StackPanel>
+                    <TextBlock Classes="ValidationError"
+                               Text="{Binding PrecioError}"
+                               IsVisible="{Binding PrecioError,
+                                           Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                </StackPanel>
 
-				<StackPanel Spacing="4">
-					<TextBlock Text="Unidades en stock"/>
-					<NumericUpDown Value="{Binding Unidades}"
+                <!-- Unidades -->
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="FieldLabel" Text="Unidades en stock"/>
+                    <NumericUpDown Value="{Binding Unidades}"
                                    Minimum="0"
                                    Increment="1"
                                    FormatString="F0"/>
-				</StackPanel>
-			</StackPanel>
-		</Border>
+                    <TextBlock Classes="ValidationError"
+                               Text="{Binding UnidadesError}"
+                               IsVisible="{Binding UnidadesError,
+                                           Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                </StackPanel>
 
-		<!-- Footer -->
-		<Border Grid.Row="2" Margin="16,0,16,16" Background="White" Padding="16">
-			<Grid ColumnDefinitions="*,Auto,8,Auto">
-				<Button Grid.Column="1"
+            </StackPanel>
+        </Border>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Margin="16,0,16,16" Classes="FooterPanel">
+            <Grid ColumnDefinitions="*,Auto,8,Auto">
+                <Button Grid.Column="1"
+                        Classes="BrandButton"
                         Command="{Binding GuardarCommand}"
-                        Content="Guardar"
-                        Background="#FF9800"
-                        Foreground="White"
-                        Height="40" Padding="24,0"/>
+                        Content="Guardar"/>
 
-				<Button Grid.Column="3"
+                <Button Grid.Column="3"
+                        Classes="StandardButton"
                         Command="{Binding VolverCommand}"
-                        Content="Cancelar"
-                        Height="40" Padding="24,0"/>
-			</Grid>
-		</Border>
+                        Content="Cancelar"/>
+            </Grid>
+        </Border>
 
-		<!-- Loading Overlay -->
-		<Border Grid.RowSpan="3"
-                Background="#CC000000"
+        <!-- Loading Overlay -->
+        <Border Grid.RowSpan="3"
+                Classes="LoadingOverlay"
                 IsVisible="{Binding IsBusy}">
-			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-				<ProgressBar IsIndeterminate="True"
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True"
                              Width="64" Height="64"
                              Margin="0,0,0,16"/>
-				<TextBlock Text="Guardando..."
-                           FontSize="16" Foreground="White"
+                <TextBlock Text="Guardando..."
+                           FontSize="16"
+                           Foreground="White"
                            HorizontalAlignment="Center"/>
-			</StackPanel>
-		</Border>
-	</Grid>
+            </StackPanel>
+        </Border>
+
+    </Grid>
 </UserControl>

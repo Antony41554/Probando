@@ -1,125 +1,105 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"
-             xmlns:busqueda="clr-namespace:TeejoshSystem.Application.Ports.Inbound.Productos.Queries.BuscarProductos;assembly=TeejoshSystem.Application"
              x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos.InventarioView"
-			 x:CompileBindings="False">
+             x:CompileBindings="False">
 
-	<Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
 
-		<!-- Header -->
-		<Border Grid.Row="0"
-                Background="#FF9800"
-                Padding="24,16">
-			<TextBlock Text="Inventario"
-                       FontSize="20"
-                       FontWeight="SemiBold"
-                       Foreground="White"
-                       VerticalAlignment="Center"/>
-		</Border>
+        <!-- Header -->
+        <Border Grid.Row="0" Classes="PageHeader">
+            <TextBlock Text="Inventario"/>
+        </Border>
 
-		<!-- Contenido -->
-		<Border Grid.Row="1"
-                Margin="16"
-                Background="White"
-                CornerRadius="4">
-			<Grid RowDefinitions="Auto,*">
+        <!-- Contenido -->
+        <Border Grid.Row="1" Margin="16" Classes="ContentPanel">
+            <Grid RowDefinitions="Auto,*">
 
-				<!-- Filtros -->
-				<StackPanel Grid.Row="0" Margin="24,24,24,16">
-					<TextBlock Text="Búsqueda y Filtros"
-                               FontSize="16"
-                               FontWeight="SemiBold"
+                <!-- Filtros -->
+                <StackPanel Grid.Row="0" Margin="24,24,24,16">
+                    <TextBlock Classes="SectionTitle"
+                               Text="Búsqueda y Filtros"
                                Margin="0,0,0,16"/>
-					<Grid ColumnDefinitions="*,16,200,16,Auto">
-						<TextBox Grid.Column="0"
+                    <Grid ColumnDefinitions="*,16,200,16,Auto">
+                        <TextBox Grid.Column="0"
                                  Text="{Binding Busqueda}"
                                  Watermark="Buscar por nombre..."/>
 
-						<ComboBox Grid.Column="2"
+                        <ComboBox Grid.Column="2"
                                   ItemsSource="{Binding TiposDisponibles}"
                                   SelectedItem="{Binding TipoFiltro}"
                                   DisplayMemberBinding="{Binding Nombre}"
                                   PlaceholderText="Tipo de producto"/>
 
-						<Button Grid.Column="4"
+                        <Button Grid.Column="4"
+                                Classes="BrandButton"
                                 Command="{Binding CargarCommand}"
-                                Background="#FF9800"
-                                Foreground="White"
-                                Content="Buscar"
-                                Height="40"
-                                Padding="24,0"/>
-					</Grid>
-				</StackPanel>
+                                Content="Buscar"/>
+                    </Grid>
+                </StackPanel>
 
-				<!-- DataGrid -->
-				<DataGrid Grid.Row="1"
+                <!-- DataGrid -->
+                <DataGrid Grid.Row="1"
                           ItemsSource="{Binding Productos}"
                           SelectionMode="Single"
-                          AutoGenerateColumns="True"
+                          AutoGenerateColumns="False"
                           IsReadOnly="True"
                           Margin="24,0,24,24">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="ID"
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID"
                                             Binding="{Binding Id}"
                                             Width="60"/>
-						<DataGridTextColumn Header="Nombre"
+                        <DataGridTextColumn Header="Nombre"
                                             Binding="{Binding Nombre}"
                                             Width="2*"/>
-						<DataGridTextColumn Header="Precio"
+                        <DataGridTextColumn Header="Precio"
                                             Binding="{Binding Precio, StringFormat=\{0:C\}}"
                                             Width="100"/>
-						<DataGridTextColumn Header="Stock"
+                        <DataGridTextColumn Header="Stock"
                                             Binding="{Binding Unidades}"
                                             Width="80"/>
-						<DataGridTextColumn Header="Tipo"
+                        <DataGridTextColumn Header="Tipo"
                                             Binding="{Binding Tipo}"
                                             Width="120"/>
-						<DataGridTextColumn Header="Detalle"
+                        <DataGridTextColumn Header="Detalle"
                                             Binding="{Binding DetalleResumen}"
                                             Width="2*"/>
-					</DataGrid.Columns>
-				</DataGrid>
-			</Grid>
-		</Border>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
 
-		<!-- Footer -->
-		<Border Grid.Row="2"
-                Margin="16,0,16,16"
-                Background="White"
-                Padding="16">
-			<Grid ColumnDefinitions="*,Auto">
-				<TextBlock VerticalAlignment="Center">
-					<Run Text="Total de productos: "/>
-					<Run Text="{Binding Productos.Count, Mode=OneWay}"
+        <!-- Footer -->
+        <Border Grid.Row="2" Margin="16,0,16,16" Classes="FooterPanel">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock VerticalAlignment="Center">
+                    <Run Text="Total de productos: "/>
+                    <Run Text="{Binding Productos.Count, Mode=OneWay}"
                          FontWeight="Bold"
-                         Foreground="#FF9800"/>
-				</TextBlock>
+                         Foreground="{StaticResource BrandBrush}"/>
+                </TextBlock>
 
-				<Button Grid.Column="1"
+                <Button Grid.Column="1"
+                        Classes="StandardButton"
                         Command="{Binding VolverCommand}"
-                        Content="Volver"
-                        Height="40"
-                        Padding="24,0"/>
-			</Grid>
-		</Border>
+                        Content="Volver"/>
+            </Grid>
+        </Border>
 
-		<!-- Loading Overlay -->
-		<Border Grid.RowSpan="3"
-                Background="#CC000000"
+        <!-- Loading Overlay -->
+        <Border Grid.RowSpan="3"
+                Classes="LoadingOverlay"
                 IsVisible="{Binding IsBusy}">
-			<StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-				<ProgressBar IsIndeterminate="True"
-                             Width="64"
-                             Height="64"
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True"
+                             Width="64" Height="64"
                              Margin="0,0,0,16"/>
-				<TextBlock Text="Cargando inventario..."
+                <TextBlock Text="Cargando inventario..."
                            FontSize="16"
                            Foreground="White"
                            HorizontalAlignment="Center"/>
-			</StackPanel>
-		</Border>
+            </StackPanel>
+        </Border>
 
-	</Grid>
+    </Grid>
 </UserControl>

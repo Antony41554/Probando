@@ -22,6 +22,8 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     private readonly int _productoId;
     private readonly TipoProducto _tipo;
 
+    // ─── Propiedades del formulario ───────────────────────────────────────
+
     [ObservableProperty]
     private string? _nombre;
 
@@ -30,6 +32,14 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
     [ObservableProperty]
     private int _unidades;
+
+    // ─── Propiedades de error bindeables ──────────────────────────────────
+
+    public string? NombreError   => GetFirstError(nameof(Nombre));
+    public string? PrecioError   => GetFirstError(nameof(Precio));
+    public string? UnidadesError => GetFirstError(nameof(Unidades));
+
+    // ─── Constructor ──────────────────────────────────────────────────────
 
     public EditarProductoViewModel(
         IMediator mediator,
@@ -40,13 +50,13 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
         int productoId,
         TipoProducto tipo)
     {
-        _mediator = mediator;
+        _mediator     = mediator;
         _notification = notification;
         _confirmation = confirmation;
-        _navigation = navigation;
-        _gestionarVm = gestionarVm;
-        _productoId = productoId;
-        _tipo = tipo;
+        _navigation   = navigation;
+        _gestionarVm  = gestionarVm;
+        _productoId   = productoId;
+        _tipo         = tipo;
 
         ErrorsChanged += (_, _) => GuardarCommand.NotifyCanExecuteChanged();
 
@@ -61,6 +71,8 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     {
         // Se implementará cuando exista ObtenerProductoPorIdQuery
     }
+
+    // ─── Comandos ─────────────────────────────────────────────────────────
 
     [RelayCommand]
     private void Volver() => _navigation.NavigateTo(_gestionarVm);
@@ -105,26 +117,37 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
     private bool CanGuardar() => !HasErrors && !IsBusy;
 
+    // ─── Validaciones con notificación de error bindeable ─────────────────
+
     partial void OnNombreChanged(string? value)
     {
         ClearErrors(nameof(Nombre));
+
         if (string.IsNullOrWhiteSpace(value))
             AddError(nameof(Nombre), "El nombre es obligatorio.");
         else if (value.Length > 50)
             AddError(nameof(Nombre), "Máximo 50 caracteres.");
+
+        OnPropertyChanged(nameof(NombreError));
     }
 
     partial void OnPrecioChanged(decimal value)
     {
         ClearErrors(nameof(Precio));
+
         if (value < 0)
             AddError(nameof(Precio), "El precio no puede ser negativo.");
+
+        OnPropertyChanged(nameof(PrecioError));
     }
 
     partial void OnUnidadesChanged(int value)
     {
         ClearErrors(nameof(Unidades));
+
         if (value < 0)
             AddError(nameof(Unidades), "Las unidades no pueden ser negativas.");
+
+        OnPropertyChanged(nameof(UnidadesError));
     }
 }
