@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Interaction="using:Avalonia.Xaml.Interactivity"
-             xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+             xmlns:validation="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.Behaviors"
              xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"
              x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos.EditarProductoView"
              x:DataType="vm:EditarProductoViewModel">
@@ -22,59 +21,45 @@
                 <!-- Nombre -->
                 <StackPanel Spacing="4">
                     <TextBlock Classes="FieldLabel" Text="Nombre"/>
-                    <TextBox Text="{Binding Nombre}"
-                             Watermark="Nombre del producto">
-                        <Interaction.Behaviors>
-                            <ia:EventTriggerBehavior EventName="LostFocus">
-                                <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
-                                                        CommandParameter="Nombre"/>
-                            </ia:EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                    </TextBox>
+                    <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
+                             Watermark="Nombre del producto"
+                             validation:ValidationField.FieldName="Nombre"
+                             validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                             validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                             validation:ValidationField.IsInvalid="{Binding NombreValidation.HasError}"/>
                     <TextBlock Classes="ValidationError"
-                               Text="{Binding NombreError}"
-                               IsVisible="{Binding NombreError,
-                                           Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                               Text="{Binding NombreValidation.ErrorMessage}"
+                               IsVisible="{Binding NombreValidation.HasError}"/>
                 </StackPanel>
 
                 <!-- Precio -->
                 <StackPanel Spacing="4">
                     <TextBlock Classes="FieldLabel" Text="Precio"/>
-                    <NumericUpDown Value="{Binding Precio}"
-                                   Minimum="0"
+                    <NumericUpDown Value="{Binding Precio, UpdateSourceTrigger=PropertyChanged}"
                                    FormatString="F2"
-                                   Increment="0.5">
-                        <Interaction.Behaviors>
-                            <ia:EventTriggerBehavior EventName="LostFocus">
-                                <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
-                                                        CommandParameter="Precio"/>
-                            </ia:EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                    </NumericUpDown>
+                                   Increment="0.5"
+                                   validation:ValidationField.FieldName="Precio"
+                                   validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                   validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                   validation:ValidationField.IsInvalid="{Binding PrecioValidation.HasError}"/>
                     <TextBlock Classes="ValidationError"
-                               Text="{Binding PrecioError}"
-                               IsVisible="{Binding PrecioError,
-                                           Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                               Text="{Binding PrecioValidation.ErrorMessage}"
+                               IsVisible="{Binding PrecioValidation.HasError}"/>
                 </StackPanel>
 
                 <!-- Unidades -->
                 <StackPanel Spacing="4">
                     <TextBlock Classes="FieldLabel" Text="Unidades en stock"/>
-                    <NumericUpDown Value="{Binding Unidades}"
-                                   Minimum="0"
+                    <NumericUpDown Value="{Binding Unidades, UpdateSourceTrigger=PropertyChanged}"
                                    Increment="1"
-                                   FormatString="F0">
-                        <Interaction.Behaviors>
-                            <ia:EventTriggerBehavior EventName="LostFocus">
-                                <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
-                                                        CommandParameter="Unidades"/>
-                            </ia:EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                    </NumericUpDown>
+                                   FormatString="F0"
+                                   validation:ValidationField.FieldName="Unidades"
+                                   validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                   validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                   validation:ValidationField.IsInvalid="{Binding UnidadesValidation.HasError}"/>
                     <TextBlock Classes="ValidationError"
-                               Text="{Binding UnidadesError}"
-                               IsVisible="{Binding UnidadesError,
-                                           Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                               Text="{Binding UnidadesValidation.ErrorMessage}"
+                               IsVisible="{Binding UnidadesValidation.HasError}"/>
                 </StackPanel>
 
             </StackPanel>

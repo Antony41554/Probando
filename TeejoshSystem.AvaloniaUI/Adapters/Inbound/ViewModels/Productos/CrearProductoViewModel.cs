@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MediatR;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -22,6 +23,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     private readonly INotificationService _notification;
     private readonly IConfirmationService _confirmation;
     private readonly INavigationService _navigation;
+    private readonly ProductoValidationRules _validationRules = ProductoValidationRules.Default;
 
     // ─── Campos comunes ───────────────────────────────────────────────────
 
@@ -31,11 +33,22 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     [ObservableProperty] private TipoProductoFiltroItem? _tipoSeleccionado;
     [ObservableProperty] private bool _catalogosCargados;
 
-    // ─── Errores bindeables ───────────────────────────────────────────────
+    // ─── Estado visual de validación ──────────────────────────────────────
 
-    public string? NombreError => GetFirstError(nameof(Nombre));
-    public string? PrecioError => GetFirstError(nameof(Precio));
-    public string? UnidadesError => GetFirstError(nameof(Unidades));
+    public FieldValidationState NombreValidation { get; }
+    public FieldValidationState PrecioValidation { get; }
+    public FieldValidationState UnidadesValidation { get; }
+    public FieldValidationState HwModeloValidation { get; }
+    public FieldValidationState HwAnioValidation { get; }
+    public FieldValidationState HwSerieValidation { get; }
+    public FieldValidationState FunkoNumeroBoxValidation { get; }
+    public FieldValidationState FunkoLicenciaValidation { get; }
+    public FieldValidationState ToyJugadoresMinValidation { get; }
+    public FieldValidationState ToyJugadoresMaxValidation { get; }
+    public FieldValidationState VariosMarcaValidation { get; }
+    public FieldValidationState VariosAltoValidation { get; }
+    public FieldValidationState VariosAnchoValidation { get; }
+    public FieldValidationState VariosMaterialValidation { get; }
 
     // ─── Hot Wheels ───────────────────────────────────────────────────────
 
@@ -112,6 +125,21 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         _confirmation = confirmation;
         _navigation = navigation;
 
+        NombreValidation = RegisterFieldValidation(nameof(Nombre), ValidateNombre);
+        PrecioValidation = RegisterFieldValidation(nameof(Precio), ValidatePrecio);
+        UnidadesValidation = RegisterFieldValidation(nameof(Unidades), ValidateUnidades);
+        HwModeloValidation = RegisterFieldValidation(nameof(HwModelo), ValidateHwModelo);
+        HwAnioValidation = RegisterFieldValidation(nameof(HwAnio), ValidateHwAnio);
+        HwSerieValidation = RegisterFieldValidation(nameof(HwSerie), ValidateHwSerie);
+        FunkoNumeroBoxValidation = RegisterFieldValidation(nameof(FunkoNumeroBox), ValidateFunkoNumeroBox);
+        FunkoLicenciaValidation = RegisterFieldValidation(nameof(FunkoLicencia), ValidateFunkoLicencia);
+        ToyJugadoresMinValidation = RegisterFieldValidation(nameof(ToyJugadoresMin), ValidateToyJugadoresMin);
+        ToyJugadoresMaxValidation = RegisterFieldValidation(nameof(ToyJugadoresMax), ValidateToyJugadoresMax);
+        VariosMarcaValidation = RegisterFieldValidation(nameof(VariosMarca), ValidateVariosMarca);
+        VariosAltoValidation = RegisterFieldValidation(nameof(VariosAlto), ValidateVariosAlto);
+        VariosAnchoValidation = RegisterFieldValidation(nameof(VariosAncho), ValidateVariosAncho);
+        VariosMaterialValidation = RegisterFieldValidation(nameof(VariosMaterial), ValidateVariosMaterial);
+
         TipoSeleccionado = TiposDisponibles[0];
 
         ErrorsChanged += (_, _) => GuardarCommand.NotifyCanExecuteChanged();
@@ -128,6 +156,8 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
     partial void OnTipoSeleccionadoChanged(TipoProductoFiltroItem? value)
     {
+        ClearFieldValidations(GetCamposPorTipo());
+
         OnPropertyChanged(nameof(MostrarHotWheels));
         OnPropertyChanged(nameof(MostrarFunko));
         OnPropertyChanged(nameof(MostrarTcg));
@@ -190,61 +220,141 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         }
     }
 
-    // ─── Validación: limpiar al escribir, validar al salir del campo ──────
+    // ─── Validación: limpiar al entrar/escribir, validar al salir ─────────
 
-    /// <summary>
-    /// Invocado desde EventTriggerBehavior (LostFocus) en cada campo del XAML.
-    /// Recibe el nombre de la propiedad como CommandParameter.
-    /// </summary>
-    [RelayCommand]
-    private void ValidarCampo(string campo)
+    private bool ValidarFormulario() => ValidateFields(GetCamposActivos());
+
+    private IEnumerable<string> GetCamposActivos()
     {
-        switch (campo)
+        yield return nameof(Nombre);
+        yield return nameof(Precio);
+        yield return nameof(Unidades);
+
+        if (MostrarHotWheels)
         {
-            case nameof(Nombre):
-                ClearErrors(nameof(Nombre));
-                if (string.IsNullOrWhiteSpace(Nombre))
-                    AddError(nameof(Nombre), "*Nombre inválido.");
-                else if (Nombre.Length > 100)
-                    AddError(nameof(Nombre), "*El nombre no puede superar los 100 caracteres.");
-                OnPropertyChanged(nameof(NombreError));
-                break;
+            yield return nameof(HwModelo);
+            yield return nameof(HwAnio);
+            yield return nameof(HwSerie);
+        }
 
-            case nameof(Precio):
-                ClearErrors(nameof(Precio));
-                if (Precio < 0)
-                    AddError(nameof(Precio), "*Precio inválido.");
-                OnPropertyChanged(nameof(PrecioError));
-                break;
+        if (MostrarFunko)
+        {
+            yield return nameof(FunkoNumeroBox);
+            yield return nameof(FunkoLicencia);
+        }
 
-            case nameof(Unidades):
-                ClearErrors(nameof(Unidades));
-                if (Unidades < 0)
-                    AddError(nameof(Unidades), "*Unidades inválidas.");
-                OnPropertyChanged(nameof(UnidadesError));
-                break;
+        if (MostrarToy)
+        {
+            yield return nameof(ToyJugadoresMin);
+            yield return nameof(ToyJugadoresMax);
+        }
+
+        if (MostrarVarios)
+        {
+            yield return nameof(VariosMarca);
+            yield return nameof(VariosAlto);
+            yield return nameof(VariosAncho);
+            yield return nameof(VariosMaterial);
         }
     }
 
-    // OnXxxChanged solo limpia — el usuario ve el error desaparecer al empezar a corregir
-
-    partial void OnNombreChanged(string? value)
+    private static IEnumerable<string> GetCamposPorTipo()
     {
-        ClearErrors(nameof(Nombre));
-        OnPropertyChanged(nameof(NombreError));
+        yield return nameof(HwModelo);
+        yield return nameof(HwAnio);
+        yield return nameof(HwSerie);
+        yield return nameof(FunkoNumeroBox);
+        yield return nameof(FunkoLicencia);
+        yield return nameof(ToyJugadoresMin);
+        yield return nameof(ToyJugadoresMax);
+        yield return nameof(VariosMarca);
+        yield return nameof(VariosAlto);
+        yield return nameof(VariosAncho);
+        yield return nameof(VariosMaterial);
     }
 
-    partial void OnPrecioChanged(decimal value)
+    private string? ValidateNombre()
     {
-        ClearErrors(nameof(Precio));
-        OnPropertyChanged(nameof(PrecioError));
+        if (string.IsNullOrWhiteSpace(Nombre))
+            return "*Nombre inválido";
+
+        return Nombre.Trim().Length > _validationRules.NombreMaxLength
+            ? $"*El nombre no puede superar los {_validationRules.NombreMaxLength} caracteres"
+            : null;
     }
 
-    partial void OnUnidadesChanged(int value)
+    private string? ValidatePrecio() => Precio < _validationRules.PrecioMinimo
+        ? "*Precio inválido"
+        : null;
+
+    private string? ValidateUnidades() => Unidades < _validationRules.UnidadesMinimas
+        ? "*Unidades inválidas"
+        : null;
+
+    private string? ValidateHwModelo() => ValidateTextoDetalle(HwModelo, "*Modelo inválido");
+
+    private string? ValidateHwAnio() => HwAnio < _validationRules.HotWheelsAnioMinimo ||
+                                        HwAnio > _validationRules.HotWheelsAnioMaximo
+        ? "*Año inválido"
+        : null;
+
+    private string? ValidateHwSerie() => ValidateTextoDetalle(HwSerie, "*Serie inválida");
+
+    private string? ValidateFunkoNumeroBox() => FunkoNumeroBox < _validationRules.FunkoNumeroCajaMinimo
+        ? "*Número de caja inválido"
+        : null;
+
+    private string? ValidateFunkoLicencia() => ValidateTextoDetalle(FunkoLicencia, "*Licencia inválida");
+
+    private string? ValidateToyJugadoresMin() => ToyJugadoresMin < _validationRules.ToyJugadoresMinimo
+        ? "*Jugadores mínimos inválido"
+        : null;
+
+    private string? ValidateToyJugadoresMax() => ToyJugadoresMax < ToyJugadoresMin
+        ? "*Jugadores máximos inválido"
+        : null;
+
+    private string? ValidateVariosMarca() => ValidateTextoDetalle(VariosMarca, "*Marca inválida");
+
+    private string? ValidateVariosAlto() => VariosAlto < _validationRules.DimensionMinima
+        ? "*Alto inválido"
+        : null;
+
+    private string? ValidateVariosAncho() => VariosAncho < _validationRules.DimensionMinima
+        ? "*Ancho inválido"
+        : null;
+
+    private string? ValidateVariosMaterial() => ValidateTextoDetalle(VariosMaterial, "*Material inválido");
+
+    private string? ValidateTextoDetalle(string? value, string invalidMessage)
     {
-        ClearErrors(nameof(Unidades));
-        OnPropertyChanged(nameof(UnidadesError));
+        if (string.IsNullOrWhiteSpace(value))
+            return invalidMessage;
+
+        return value.Trim().Length > _validationRules.TextoDetalleMaxLength
+            ? $"*No puede superar los {_validationRules.TextoDetalleMaxLength} caracteres"
+            : null;
     }
+
+    partial void OnNombreChanged(string? value) => ClearFieldValidation(nameof(Nombre));
+    partial void OnPrecioChanged(decimal value) => ClearFieldValidation(nameof(Precio));
+    partial void OnUnidadesChanged(int value) => ClearFieldValidation(nameof(Unidades));
+    partial void OnHwModeloChanged(string? value) => ClearFieldValidation(nameof(HwModelo));
+    partial void OnHwAnioChanged(int value) => ClearFieldValidation(nameof(HwAnio));
+    partial void OnHwSerieChanged(string? value) => ClearFieldValidation(nameof(HwSerie));
+    partial void OnFunkoNumeroBoxChanged(int value) => ClearFieldValidation(nameof(FunkoNumeroBox));
+    partial void OnFunkoLicenciaChanged(string? value) => ClearFieldValidation(nameof(FunkoLicencia));
+    partial void OnToyJugadoresMinChanged(int value)
+    {
+        ClearFieldValidation(nameof(ToyJugadoresMin));
+        ClearFieldValidation(nameof(ToyJugadoresMax));
+    }
+
+    partial void OnToyJugadoresMaxChanged(int value) => ClearFieldValidation(nameof(ToyJugadoresMax));
+    partial void OnVariosMarcaChanged(string? value) => ClearFieldValidation(nameof(VariosMarca));
+    partial void OnVariosAltoChanged(decimal value) => ClearFieldValidation(nameof(VariosAlto));
+    partial void OnVariosAnchoChanged(decimal value) => ClearFieldValidation(nameof(VariosAncho));
+    partial void OnVariosMaterialChanged(string? value) => ClearFieldValidation(nameof(VariosMaterial));
 
     // ─── Guardar ──────────────────────────────────────────────────────────
 
@@ -252,6 +362,9 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     private async Task GuardarAsync()
     {
         if (IsBusy) return;
+
+        if (!ValidarFormulario())
+            return;
 
         var confirmar = await _confirmation.ConfirmAsync("¿Desea crear el producto?");
         if (!confirmar) return;

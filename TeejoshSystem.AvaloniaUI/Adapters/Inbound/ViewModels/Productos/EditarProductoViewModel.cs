@@ -19,6 +19,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     private readonly IConfirmationService _confirmation;
     private readonly INavigationService _navigation;
     private readonly GestionarProductosViewModel _gestionarVm;
+    private readonly ProductoValidationRules _validationRules = ProductoValidationRules.Default;
     private readonly int _productoId;
     private readonly TipoProducto _tipo;
 
@@ -28,11 +29,11 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     [ObservableProperty] private decimal _precio;
     [ObservableProperty] private int _unidades;
 
-    // ─── Errores bindeables ───────────────────────────────────────────────
+    // ─── Estado visual de validación ──────────────────────────────────────
 
-    public string? NombreError => GetFirstError(nameof(Nombre));
-    public string? PrecioError => GetFirstError(nameof(Precio));
-    public string? UnidadesError => GetFirstError(nameof(Unidades));
+    public FieldValidationState NombreValidation { get; }
+    public FieldValidationState PrecioValidation { get; }
+    public FieldValidationState UnidadesValidation { get; }
 
     // ─── Constructor ──────────────────────────────────────────────────────
 
@@ -53,6 +54,10 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
         _productoId = productoId;
         _tipo = tipo;
 
+        NombreValidation = RegisterFieldValidation(nameof(Nombre), ValidateNombre);
+        PrecioValidation = RegisterFieldValidation(nameof(Precio), ValidatePrecio);
+        UnidadesValidation = RegisterFieldValidation(nameof(Unidades), ValidateUnidades);
+
         ErrorsChanged += (_, _) => GuardarCommand.NotifyCanExecuteChanged();
         PropertyChanged += (_, e) =>
         {
@@ -66,60 +71,36 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
         // Pendiente: implementar cuando exista ObtenerProductoPorIdQuery
     }
 
-    // ─── Validación: limpiar al escribir, validar al salir del campo ──────
+    // ─── Validación: limpiar al entrar/escribir, validar al salir ─────────
 
-    /// <summary>
-    /// Invocado desde EventTriggerBehavior (LostFocus) en cada campo del XAML.
-    /// </summary>
-    [RelayCommand]
-    private void ValidarCampo(string campo)
+    private bool ValidarFormulario() => ValidateFields(new[]
     {
-        switch (campo)
-        {
-            case nameof(Nombre):
-                ClearErrors(nameof(Nombre));
-                if (string.IsNullOrWhiteSpace(Nombre))
-                    AddError(nameof(Nombre), "*Nombre inválido.");
-                else if (Nombre.Length > 100)
-                    AddError(nameof(Nombre), "*El nombre no puede superar los 100 caracteres.");
-                OnPropertyChanged(nameof(NombreError));
-                break;
+        nameof(Nombre),
+        nameof(Precio),
+        nameof(Unidades)
+    });
 
-            case nameof(Precio):
-                ClearErrors(nameof(Precio));
-                if (Precio < 0)
-                    AddError(nameof(Precio), "*Precio inválido.");
-                OnPropertyChanged(nameof(PrecioError));
-                break;
+    private string? ValidateNombre()
+    {
+        if (string.IsNullOrWhiteSpace(Nombre))
+            return "*Nombre inválido";
 
-            case nameof(Unidades):
-                ClearErrors(nameof(Unidades));
-                if (Unidades < 0)
-                    AddError(nameof(Unidades), "*Unidades inválidas.");
-                OnPropertyChanged(nameof(UnidadesError));
-                break;
-        }
+        return Nombre.Trim().Length > _validationRules.NombreMaxLength
+            ? $"*El nombre no puede superar los {_validationRules.NombreMaxLength} caracteres"
+            : null;
     }
 
-    // OnXxxChanged solo limpia — error desaparece en cuanto el usuario empieza a corregir
+    private string? ValidatePrecio() => Precio < _validationRules.PrecioMinimo
+        ? "*Precio inválido"
+        : null;
 
-    partial void OnNombreChanged(string? value)
-    {
-        ClearErrors(nameof(Nombre));
-        OnPropertyChanged(nameof(NombreError));
-    }
+    private string? ValidateUnidades() => Unidades < _validationRules.UnidadesMinimas
+        ? "*Unidades inválidas"
+        : null;
 
-    partial void OnPrecioChanged(decimal value)
-    {
-        ClearErrors(nameof(Precio));
-        OnPropertyChanged(nameof(PrecioError));
-    }
-
-    partial void OnUnidadesChanged(int value)
-    {
-        ClearErrors(nameof(Unidades));
-        OnPropertyChanged(nameof(UnidadesError));
-    }
+    partial void OnNombreChanged(string? value) => ClearFieldValidation(nameof(Nombre));
+    partial void OnPrecioChanged(decimal value) => ClearFieldValidation(nameof(Precio));
+    partial void OnUnidadesChanged(int value) => ClearFieldValidation(nameof(Unidades));
 
     // ─── Comandos ─────────────────────────────────────────────────────────
 
@@ -130,6 +111,9 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     private async Task GuardarAsync()
     {
         if (IsBusy) return;
+
+        if (!ValidarFormulario())
+            return;
 
         var confirmar = await _confirmation.ConfirmAsync(
             "¿Desea guardar los cambios del producto?");

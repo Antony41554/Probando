@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Interaction="using:Avalonia.Xaml.Interactivity"
-             xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+             xmlns:validation="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.Behaviors"
              xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"
              x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos.CrearProductoView"
              x:DataType="vm:CrearProductoViewModel">
@@ -20,10 +19,9 @@
 
                     <!-- ═══ Resumen de errores (sólo visible cuando HasErrors) ═══ -->
                     <Border IsVisible="{Binding HasErrors}"
-                            Background="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                            Background="{StaticResource ErrorBackgroundBrush}"
                             CornerRadius="4"
-                            Padding="12,8"
-                            Opacity="0.12">
+                            Padding="12,8">
                         <StackPanel>
                             <TextBlock Text="Corrige los siguientes errores antes de continuar:"
                                        FontWeight="SemiBold"
@@ -55,59 +53,45 @@
                     <!-- Nombre -->
                     <StackPanel Spacing="4">
                         <TextBlock Classes="FieldLabel" Text="Nombre"/>
-                        <TextBox Text="{Binding Nombre}"
-                                 Watermark="Nombre del producto">
-                            <Interaction.Behaviors>
-                                <ia:EventTriggerBehavior EventName="LostFocus">
-                                    <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
-                                                            CommandParameter="Nombre"/>
-                                </ia:EventTriggerBehavior>
-                            </Interaction.Behaviors>
-                        </TextBox>
+                        <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
+                                 Watermark="Nombre del producto"
+                                 validation:ValidationField.FieldName="Nombre"
+                                 validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                 validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                 validation:ValidationField.IsInvalid="{Binding NombreValidation.HasError}"/>
                         <TextBlock Classes="ValidationError"
-                                   Text="{Binding NombreError}"
-                                   IsVisible="{Binding NombreError,
-                                               Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                   Text="{Binding NombreValidation.ErrorMessage}"
+                                   IsVisible="{Binding NombreValidation.HasError}"/>
                     </StackPanel>
 
                     <!-- Precio y Unidades -->
                     <Grid ColumnDefinitions="*,16,*">
                         <StackPanel Grid.Column="0" Spacing="4">
                             <TextBlock Classes="FieldLabel" Text="Precio"/>
-                            <NumericUpDown Value="{Binding Precio}"
-                                           Minimum="0"
+                            <NumericUpDown Value="{Binding Precio, UpdateSourceTrigger=PropertyChanged}"
                                            FormatString="F2"
-                                           Increment="0.5">
-                                <Interaction.Behaviors>
-                                    <ia:EventTriggerBehavior EventName="LostFocus">
-                                        <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
-                                                                CommandParameter="Precio"/>
-                                    </ia:EventTriggerBehavior>
-                                </Interaction.Behaviors>
-                            </NumericUpDown>
+                                           Increment="0.5"
+                                           validation:ValidationField.FieldName="Precio"
+                                           validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                           validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                           validation:ValidationField.IsInvalid="{Binding PrecioValidation.HasError}"/>
                             <TextBlock Classes="ValidationError"
-                                       Text="{Binding PrecioError}"
-                                       IsVisible="{Binding PrecioError,
-                                                   Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                       Text="{Binding PrecioValidation.ErrorMessage}"
+                                       IsVisible="{Binding PrecioValidation.HasError}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Spacing="4">
                             <TextBlock Classes="FieldLabel" Text="Unidades"/>
-                            <NumericUpDown Value="{Binding Unidades}"
-                                           Minimum="0"
+                            <NumericUpDown Value="{Binding Unidades, UpdateSourceTrigger=PropertyChanged}"
                                            Increment="1"
-                                           FormatString="F0">
-                                <Interaction.Behaviors>
-                                    <ia:EventTriggerBehavior EventName="LostFocus">
-                                        <ia:InvokeCommandAction Command="{Binding ValidarCampoCommand}"
-                                                                CommandParameter="Unidades"/>
-                                    </ia:EventTriggerBehavior>
-                                </Interaction.Behaviors>
-                            </NumericUpDown>
+                                           FormatString="F0"
+                                           validation:ValidationField.FieldName="Unidades"
+                                           validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                           validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                           validation:ValidationField.IsInvalid="{Binding UnidadesValidation.HasError}"/>
                             <TextBlock Classes="ValidationError"
-                                       Text="{Binding UnidadesError}"
-                                       IsVisible="{Binding UnidadesError,
-                                                   Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                       Text="{Binding UnidadesValidation.ErrorMessage}"
+                                       IsVisible="{Binding UnidadesValidation.HasError}"/>
                         </StackPanel>
                     </Grid>
 
@@ -117,20 +101,43 @@
 
                         <StackPanel Spacing="4">
                             <TextBlock Classes="FieldLabel" Text="Modelo"/>
-                            <TextBox Text="{Binding HwModelo}" Watermark="Ej: Ford Mustang"/>
+                            <TextBox Text="{Binding HwModelo, UpdateSourceTrigger=PropertyChanged}"
+                                     Watermark="Ej: Ford Mustang"
+                                     validation:ValidationField.FieldName="HwModelo"
+                                     validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                     validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                     validation:ValidationField.IsInvalid="{Binding HwModeloValidation.HasError}"/>
+                            <TextBlock Classes="ValidationError"
+                                       Text="{Binding HwModeloValidation.ErrorMessage}"
+                                       IsVisible="{Binding HwModeloValidation.HasError}"/>
                         </StackPanel>
 
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Año"/>
-                                <NumericUpDown Value="{Binding HwAnio}"
+                                <NumericUpDown Value="{Binding HwAnio, UpdateSourceTrigger=PropertyChanged}"
                                                Minimum="1967"
                                                Increment="1"
-                                               FormatString="F0"/>
+                                               FormatString="F0"
+                                               validation:ValidationField.FieldName="HwAnio"
+                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                               validation:ValidationField.IsInvalid="{Binding HwAnioValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding HwAnioValidation.ErrorMessage}"
+                                           IsVisible="{Binding HwAnioValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Serie"/>
-                                <TextBox Text="{Binding HwSerie}" Watermark="Ej: HW Race Team"/>
+                                <TextBox Text="{Binding HwSerie, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: HW Race Team"
+                                         validation:ValidationField.FieldName="HwSerie"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding HwSerieValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding HwSerieValidation.ErrorMessage}"
+                                           IsVisible="{Binding HwSerieValidation.HasError}"/>
                             </StackPanel>
                         </Grid>
 
@@ -150,12 +157,29 @@
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Número de caja"/>
-                                <NumericUpDown Value="{Binding FunkoNumeroBox}"
-                                               Minimum="0" Increment="1" FormatString="F0"/>
+                                <NumericUpDown Value="{Binding FunkoNumeroBox, UpdateSourceTrigger=PropertyChanged}"
+                                               Minimum="0"
+                                               Increment="1"
+                                               FormatString="F0"
+                                               validation:ValidationField.FieldName="FunkoNumeroBox"
+                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                               validation:ValidationField.IsInvalid="{Binding FunkoNumeroBoxValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding FunkoNumeroBoxValidation.ErrorMessage}"
+                                           IsVisible="{Binding FunkoNumeroBoxValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Licencia"/>
-                                <TextBox Text="{Binding FunkoLicencia}" Watermark="Ej: Marvel"/>
+                                <TextBox Text="{Binding FunkoLicencia, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: Marvel"
+                                         validation:ValidationField.FieldName="FunkoLicencia"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding FunkoLicenciaValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding FunkoLicenciaValidation.ErrorMessage}"
+                                           IsVisible="{Binding FunkoLicenciaValidation.HasError}"/>
                             </StackPanel>
                         </Grid>
 
@@ -218,13 +242,31 @@
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Jugadores mín."/>
-                                <NumericUpDown Value="{Binding ToyJugadoresMin}"
-                                               Minimum="1" Increment="1" FormatString="F0"/>
+                                <NumericUpDown Value="{Binding ToyJugadoresMin, UpdateSourceTrigger=PropertyChanged}"
+                                               Minimum="1"
+                                               Increment="1"
+                                               FormatString="F0"
+                                               validation:ValidationField.FieldName="ToyJugadoresMin"
+                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                               validation:ValidationField.IsInvalid="{Binding ToyJugadoresMinValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding ToyJugadoresMinValidation.ErrorMessage}"
+                                           IsVisible="{Binding ToyJugadoresMinValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="4" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Jugadores máx."/>
-                                <NumericUpDown Value="{Binding ToyJugadoresMax}"
-                                               Minimum="1" Increment="1" FormatString="F0"/>
+                                <NumericUpDown Value="{Binding ToyJugadoresMax, UpdateSourceTrigger=PropertyChanged}"
+                                               Minimum="1"
+                                               Increment="1"
+                                               FormatString="F0"
+                                               validation:ValidationField.FieldName="ToyJugadoresMax"
+                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                               validation:ValidationField.IsInvalid="{Binding ToyJugadoresMaxValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding ToyJugadoresMaxValidation.ErrorMessage}"
+                                           IsVisible="{Binding ToyJugadoresMaxValidation.HasError}"/>
                             </StackPanel>
                         </Grid>
 
@@ -239,24 +281,58 @@
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Marca"/>
-                                <TextBox Text="{Binding VariosMarca}" Watermark="Ej: LEGO"/>
+                                <TextBox Text="{Binding VariosMarca, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: LEGO"
+                                         validation:ValidationField.FieldName="VariosMarca"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding VariosMarcaValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding VariosMarcaValidation.ErrorMessage}"
+                                           IsVisible="{Binding VariosMarcaValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Material"/>
-                                <TextBox Text="{Binding VariosMaterial}" Watermark="Ej: Plástico"/>
+                                <TextBox Text="{Binding VariosMaterial, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: Plástico"
+                                         validation:ValidationField.FieldName="VariosMaterial"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding VariosMaterialValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding VariosMaterialValidation.ErrorMessage}"
+                                           IsVisible="{Binding VariosMaterialValidation.HasError}"/>
                             </StackPanel>
                         </Grid>
 
                         <Grid ColumnDefinitions="*,16,*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Alto (cm)"/>
-                                <NumericUpDown Value="{Binding VariosAlto}"
-                                               Minimum="0" FormatString="F2" Increment="0.5"/>
+                                <NumericUpDown Value="{Binding VariosAlto, UpdateSourceTrigger=PropertyChanged}"
+                                               Minimum="0"
+                                               FormatString="F2"
+                                               Increment="0.5"
+                                               validation:ValidationField.FieldName="VariosAlto"
+                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                               validation:ValidationField.IsInvalid="{Binding VariosAltoValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding VariosAltoValidation.ErrorMessage}"
+                                           IsVisible="{Binding VariosAltoValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Ancho (cm)"/>
-                                <NumericUpDown Value="{Binding VariosAncho}"
-                                               Minimum="0" FormatString="F2" Increment="0.5"/>
+                                <NumericUpDown Value="{Binding VariosAncho, UpdateSourceTrigger=PropertyChanged}"
+                                               Minimum="0"
+                                               FormatString="F2"
+                                               Increment="0.5"
+                                               validation:ValidationField.FieldName="VariosAncho"
+                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                               validation:ValidationField.IsInvalid="{Binding VariosAnchoValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding VariosAnchoValidation.ErrorMessage}"
+                                           IsVisible="{Binding VariosAnchoValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="4" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Largo (cm) — opcional"/>

@@ -1,4 +1,5 @@
 <Application xmlns="https://github.com/avaloniaui"
+             xmlns:conv="clr-namespace:TeejoshSystem.AvaloniaUI.Converters"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vmMenu="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Menu"
              xmlns:vmProductos="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"

@@ -6,32 +6,36 @@
         <Color x:Key="BrandDarkColor">#E65100</Color>
         <Color x:Key="DangerColor">#E53935</Color>
         <Color x:Key="ErrorColor">#D32F2F</Color>
+        <Color x:Key="ErrorBackgroundColor">#1FD32F2F</Color>
         <Color x:Key="OverlayColor">#CC000000</Color>
 
         <SolidColorBrush x:Key="BrandBrush" Color="{StaticResource BrandColor}"/>
         <SolidColorBrush x:Key="BrandDarkBrush" Color="{StaticResource BrandDarkColor}"/>
         <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}"/>
         <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+        <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource ErrorBackgroundColor}"/>
         <SolidColorBrush x:Key="OverlayBrush" Color="{StaticResource OverlayColor}"/>
     </Styles.Resources>
 
     <!-- VALIDACIÓN -->
-    <!-- Al poner Foreground aquí, el TextPresenter interno lo heredará solo -->
-    <Style Selector="TextBox:error">
+    <Style Selector="TextBox.validationError">
         <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
         <Setter Property="BorderThickness" Value="1.5"/>
         <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
     </Style>
 
-    <!-- Se eliminó el bloque de TextPresenter que causaba el error -->
-
-    <Style Selector="NumericUpDown:error">
+    <Style Selector="NumericUpDown.validationError">
         <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
         <Setter Property="BorderThickness" Value="1.5"/>
     </Style>
 
-    <!-- En NumericUpDown sí funciona porque el template contiene un TextBox real -->
-    <Style Selector="NumericUpDown:error /template/ TextBox">
+    <Style Selector="NumericUpDown.validationError /template/ TextBox">
+        <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+    </Style>
+
+    <Style Selector="ComboBox.validationError">
+        <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
         <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
     </Style>
 
