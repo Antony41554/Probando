@@ -49,6 +49,7 @@ public partial class App : Avalonia.Application
                 services.AddSingleton<INavigationService>(sp =>
                     sp.GetRequiredService<NavigationService>());
                 services.AddSingleton<IThemeService, ThemeService>();
+                services.AddSingleton<IUserSettingsService, UserSettingsService>();
 
                 // ViewModels
                 services.AddSingleton<MainViewModel>();
@@ -70,6 +71,12 @@ public partial class App : Avalonia.Application
         // Configurar navegaci�n
         var navService = _host.Services.GetRequiredService<NavigationService>();
         var mainVm = _host.Services.GetRequiredService<MainViewModel>();
+
+        // Inicializar tema antes de renderizar la primera vista.
+        // Se resuelve vía código porque RequestedThemeVariant requiere un tipo ThemeVariant de Avalonia
+        // y nuestro ViewModel usa un enum custom (ThemeMode), además IThemeService ya encapsula
+        // la lógica de conversión y asignación al Application.Current.
+        mainVm.InitializeTheme();
 
         navService.Configure(
             vm => mainVm.CurrentView = vm,

@@ -8,26 +8,8 @@
 
         <!-- Header -->
         <Border Grid.Row="0" Classes="PageHeader">
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBlock Text="Menú Principal"
-                           VerticalAlignment="Center"/>
-
-                <!-- Selector de tema -->
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            VerticalAlignment="Center">
-                    <TextBlock Text="Tema:"
-                               Foreground="White"
-                               VerticalAlignment="Center"
-                               FontSize="13"/>
-                    <ComboBox ItemsSource="{Binding TemasDisponibles}"
-                              SelectedItem="{Binding TemaSeleccionado}"
-                              DisplayMemberBinding="{Binding Nombre}"
-                              Width="130"
-                              VerticalAlignment="Center"/>
-                </StackPanel>
-            </Grid>
+            <TextBlock Text="Menú Principal"
+                       VerticalAlignment="Center"/>
         </Border>
 
         <!-- Contenido -->

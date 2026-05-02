@@ -4,7 +4,6 @@ using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.ObjectModel;
 
 using TeejoshSystem.AvaloniaUI.Adapters.Inbound.Services;
 using TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Common;
@@ -12,32 +11,10 @@ using TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos;
 
 namespace TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Menu;
 
-/// <summary>Item de selector de tema para binding en ComboBox.</summary>
-public record TemaItem(string Nombre, ThemeMode Modo);
-
 public partial class MenuPrincipalViewModel : ViewModelBase
 {
     private readonly IServiceProvider   _serviceProvider;
     private readonly INavigationService _navigation;
-    private readonly IThemeService      _themeService;
-
-    // ─── Tema ────────────────────────────────────────────────────────────
-
-    public ObservableCollection<TemaItem> TemasDisponibles { get; } = new()
-    {
-        new TemaItem("☀  Claro",  ThemeMode.Light),
-        new TemaItem("🌙 Oscuro", ThemeMode.Dark),
-        new TemaItem("⚙  Sistema", ThemeMode.System)
-    };
-
-    [ObservableProperty]
-    private TemaItem? _temaSeleccionado;
-
-    partial void OnTemaSeleccionadoChanged(TemaItem? value)
-    {
-        if (value is not null)
-            _themeService.Apply(value.Modo);
-    }
 
     // ─── Constructor ─────────────────────────────────────────────────────
 
@@ -47,13 +24,6 @@ public partial class MenuPrincipalViewModel : ViewModelBase
     {
         _serviceProvider = serviceProvider;
         _navigation      = navigation;
-
-        // IThemeService se resuelve desde el contenedor para no cambiar
-        // la firma del constructor (compatibilidad con el wiring de App.axaml.cs)
-        _themeService = serviceProvider.GetRequiredService<IThemeService>();
-
-        // Sincroniza el ComboBox con el tema actual
-        _temaSeleccionado = TemasDisponibles[(int)_themeService.CurrentMode];
     }
 
     // ─── Comandos de navegación ───────────────────────────────────────────
