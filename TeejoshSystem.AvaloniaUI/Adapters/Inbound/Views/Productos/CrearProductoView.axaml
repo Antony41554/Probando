@@ -81,13 +81,12 @@
 
                         <StackPanel Grid.Column="2" Spacing="4">
                             <TextBlock Classes="FieldLabel" Text="Unidades"/>
-                            <NumericUpDown Value="{Binding Unidades, UpdateSourceTrigger=PropertyChanged}"
-                                           Increment="1"
-                                           FormatString="F0"
-                                           validation:ValidationField.FieldName="Unidades"
-                                           validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                           validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                           validation:ValidationField.IsInvalid="{Binding UnidadesValidation.HasError}"/>
+                            <TextBox Text="{Binding UnidadesTexto, UpdateSourceTrigger=PropertyChanged}"
+                                     Watermark="Ej: 10"
+                                     validation:ValidationField.FieldName="UnidadesTexto"
+                                     validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                     validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                     validation:ValidationField.IsInvalid="{Binding UnidadesValidation.HasError}"/>
                             <TextBlock Classes="ValidationError"
                                        Text="{Binding UnidadesValidation.ErrorMessage}"
                                        IsVisible="{Binding UnidadesValidation.HasError}"/>
@@ -114,14 +113,12 @@
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Año"/>
-                                <NumericUpDown Value="{Binding HwAnio, UpdateSourceTrigger=PropertyChanged}"
-                                               Minimum="1967"
-                                               Increment="1"
-                                               FormatString="F0"
-                                               validation:ValidationField.FieldName="HwAnio"
-                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                               validation:ValidationField.IsInvalid="{Binding HwAnioValidation.HasError}"/>
+                                <TextBox Text="{Binding HwAnioTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: 2024"
+                                         validation:ValidationField.FieldName="HwAnioTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding HwAnioValidation.HasError}"/>
                                 <TextBlock Classes="ValidationError"
                                            Text="{Binding HwAnioValidation.ErrorMessage}"
                                            IsVisible="{Binding HwAnioValidation.HasError}"/>
@@ -156,14 +153,12 @@
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Número de caja"/>
-                                <NumericUpDown Value="{Binding FunkoNumeroBox, UpdateSourceTrigger=PropertyChanged}"
-                                               Minimum="0"
-                                               Increment="1"
-                                               FormatString="F0"
-                                               validation:ValidationField.FieldName="FunkoNumeroBox"
-                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                               validation:ValidationField.IsInvalid="{Binding FunkoNumeroBoxValidation.HasError}"/>
+                                <TextBox Text="{Binding FunkoNumeroBoxTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: 123"
+                                         validation:ValidationField.FieldName="FunkoNumeroBoxTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding FunkoNumeroBoxValidation.HasError}"/>
                                 <TextBlock Classes="ValidationError"
                                            Text="{Binding FunkoNumeroBoxValidation.ErrorMessage}"
                                            IsVisible="{Binding FunkoNumeroBoxValidation.HasError}"/>
@@ -236,33 +231,36 @@
                         <Grid ColumnDefinitions="*,16,*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Edad mínima"/>
-                                <NumericUpDown Value="{Binding ToyEdadMinima}"
-                                               Minimum="0" Increment="1" FormatString="F0"/>
+                                <TextBox Text="{Binding ToyEdadMinimaTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: 8"
+                                         validation:ValidationField.FieldName="ToyEdadMinimaTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding ToyEdadMinimaValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding ToyEdadMinimaValidation.ErrorMessage}"
+                                           IsVisible="{Binding ToyEdadMinimaValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Jugadores mín."/>
-                                <NumericUpDown Value="{Binding ToyJugadoresMin, UpdateSourceTrigger=PropertyChanged}"
-                                               Minimum="1"
-                                               Increment="1"
-                                               FormatString="F0"
-                                               validation:ValidationField.FieldName="ToyJugadoresMin"
-                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                               validation:ValidationField.IsInvalid="{Binding ToyJugadoresMinValidation.HasError}"/>
+                                <TextBox Text="{Binding ToyJugadoresMinTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: 1"
+                                         validation:ValidationField.FieldName="ToyJugadoresMinTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding ToyJugadoresMinValidation.HasError}"/>
                                 <TextBlock Classes="ValidationError"
                                            Text="{Binding ToyJugadoresMinValidation.ErrorMessage}"
                                            IsVisible="{Binding ToyJugadoresMinValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="4" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Jugadores máx."/>
-                                <NumericUpDown Value="{Binding ToyJugadoresMax, UpdateSourceTrigger=PropertyChanged}"
-                                               Minimum="1"
-                                               Increment="1"
-                                               FormatString="F0"
-                                               validation:ValidationField.FieldName="ToyJugadoresMax"
-                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                               validation:ValidationField.IsInvalid="{Binding ToyJugadoresMaxValidation.HasError}"/>
+                                <TextBox Text="{Binding ToyJugadoresMaxTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: 4"
+                                         validation:ValidationField.FieldName="ToyJugadoresMaxTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding ToyJugadoresMaxValidation.HasError}"/>
                                 <TextBlock Classes="ValidationError"
                                            Text="{Binding ToyJugadoresMaxValidation.ErrorMessage}"
                                            IsVisible="{Binding ToyJugadoresMaxValidation.HasError}"/>
@@ -307,36 +305,39 @@
                         <Grid ColumnDefinitions="*,16,*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Alto (cm)"/>
-                                <NumericUpDown Value="{Binding VariosAlto, UpdateSourceTrigger=PropertyChanged}"
-                                               Minimum="0"
-                                               FormatString="F2"
-                                               Increment="0.5"
-                                               validation:ValidationField.FieldName="VariosAlto"
-                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                               validation:ValidationField.IsInvalid="{Binding VariosAltoValidation.HasError}"/>
+                                <TextBox Text="{Binding VariosAltoTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: 10.5"
+                                         validation:ValidationField.FieldName="VariosAltoTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding VariosAltoValidation.HasError}"/>
                                 <TextBlock Classes="ValidationError"
                                            Text="{Binding VariosAltoValidation.ErrorMessage}"
                                            IsVisible="{Binding VariosAltoValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Ancho (cm)"/>
-                                <NumericUpDown Value="{Binding VariosAncho, UpdateSourceTrigger=PropertyChanged}"
-                                               Minimum="0"
-                                               FormatString="F2"
-                                               Increment="0.5"
-                                               validation:ValidationField.FieldName="VariosAncho"
-                                               validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                               validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                               validation:ValidationField.IsInvalid="{Binding VariosAnchoValidation.HasError}"/>
+                                <TextBox Text="{Binding VariosAnchoTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Ej: 6.5"
+                                         validation:ValidationField.FieldName="VariosAnchoTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding VariosAnchoValidation.HasError}"/>
                                 <TextBlock Classes="ValidationError"
                                            Text="{Binding VariosAnchoValidation.ErrorMessage}"
                                            IsVisible="{Binding VariosAnchoValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="4" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Largo (cm) — opcional"/>
-                                <NumericUpDown Value="{Binding VariosLargo}"
-                                               Minimum="0" FormatString="F2" Increment="0.5"/>
+                                <TextBox Text="{Binding VariosLargoTexto, UpdateSourceTrigger=PropertyChanged}"
+                                         Watermark="Opcional"
+                                         validation:ValidationField.FieldName="VariosLargoTexto"
+                                         validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                                         validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                                         validation:ValidationField.IsInvalid="{Binding VariosLargoValidation.HasError}"/>
+                                <TextBlock Classes="ValidationError"
+                                           Text="{Binding VariosLargoValidation.ErrorMessage}"
+                                           IsVisible="{Binding VariosLargoValidation.HasError}"/>
                             </StackPanel>
                         </Grid>
 

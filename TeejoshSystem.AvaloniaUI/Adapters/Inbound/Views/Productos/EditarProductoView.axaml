@@ -49,13 +49,12 @@
                 <!-- Unidades -->
                 <StackPanel Spacing="4">
                     <TextBlock Classes="FieldLabel" Text="Unidades en stock"/>
-                    <NumericUpDown Value="{Binding Unidades, UpdateSourceTrigger=PropertyChanged}"
-                                   Increment="1"
-                                   FormatString="F0"
-                                   validation:ValidationField.FieldName="Unidades"
-                                   validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                   validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                   validation:ValidationField.IsInvalid="{Binding UnidadesValidation.HasError}"/>
+                    <TextBox Text="{Binding UnidadesTexto, UpdateSourceTrigger=PropertyChanged}"
+                             Watermark="Ej: 10"
+                             validation:ValidationField.FieldName="UnidadesTexto"
+                             validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                             validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                             validation:ValidationField.IsInvalid="{Binding UnidadesValidation.HasError}"/>
                     <TextBlock Classes="ValidationError"
                                Text="{Binding UnidadesValidation.ErrorMessage}"
                                IsVisible="{Binding UnidadesValidation.HasError}"/>

@@ -29,7 +29,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
     [ObservableProperty] private string? _nombre;
     [ObservableProperty] private string? _precioTexto = "0.00";
-    [ObservableProperty] private int _unidades;
+    [ObservableProperty] private string? _unidadesTexto = "0";
 
     // ─── Estado visual de validación ──────────────────────────────────────
 
@@ -58,7 +58,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
         NombreValidation = RegisterFieldValidation(nameof(Nombre), ValidateNombre);
         PrecioValidation = RegisterFieldValidation(nameof(PrecioTexto), ValidatePrecio);
-        UnidadesValidation = RegisterFieldValidation(nameof(Unidades), ValidateUnidades);
+        UnidadesValidation = RegisterFieldValidation(nameof(UnidadesTexto), ValidateUnidades);
 
         ErrorsChanged += (_, _) => GuardarCommand.NotifyCanExecuteChanged();
         PropertyChanged += (_, e) =>
@@ -79,7 +79,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     {
         nameof(Nombre),
         nameof(PrecioTexto),
-        nameof(Unidades)
+        nameof(UnidadesTexto)
     });
 
     private string? ValidateNombre()
@@ -108,13 +108,20 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
         NumberStyles.AllowDecimalPoint,
         CultureInfo.InvariantCulture);
 
-    private string? ValidateUnidades() => Unidades < _validationRules.UnidadesMinimas
+    private string? ValidateUnidades() => !TryParseInt(UnidadesTexto, out var unidades) ||
+                                          unidades < _validationRules.UnidadesMinimas
         ? "*Unidades inválidas"
         : null;
 
+    private static bool TryParseInt(string? value, out int result) =>
+        int.TryParse(value?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out result);
+
+    private static int ParseInt(string? value) =>
+        int.Parse(value!.Trim(), NumberStyles.None, CultureInfo.InvariantCulture);
+
     partial void OnNombreChanged(string? value) => ClearFieldValidation(nameof(Nombre));
     partial void OnPrecioTextoChanged(string? value) => ClearFieldValidation(nameof(PrecioTexto));
-    partial void OnUnidadesChanged(int value) => ClearFieldValidation(nameof(Unidades));
+    partial void OnUnidadesTextoChanged(string? value) => ClearFieldValidation(nameof(UnidadesTexto));
 
     // ─── Comandos ─────────────────────────────────────────────────────────
 
@@ -142,7 +149,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
                     _productoId,
                     Nombre!,
                     ParsePrecio(),
-                    Unidades));
+                    ParseInt(UnidadesTexto)));
 
             if (result.IsSuccess)
             {

@@ -31,7 +31,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
     [ObservableProperty] private string? _nombre;
     [ObservableProperty] private string? _precioTexto = "0.00";
-    [ObservableProperty] private int _unidades;
+    [ObservableProperty] private string? _unidadesTexto = "0";
     [ObservableProperty] private TipoProductoFiltroItem? _tipoSeleccionado;
     [ObservableProperty] private bool _catalogosCargados;
 
@@ -47,15 +47,17 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     public FieldValidationState FunkoLicenciaValidation { get; }
     public FieldValidationState ToyJugadoresMinValidation { get; }
     public FieldValidationState ToyJugadoresMaxValidation { get; }
+    public FieldValidationState ToyEdadMinimaValidation { get; }
     public FieldValidationState VariosMarcaValidation { get; }
     public FieldValidationState VariosAltoValidation { get; }
     public FieldValidationState VariosAnchoValidation { get; }
+    public FieldValidationState VariosLargoValidation { get; }
     public FieldValidationState VariosMaterialValidation { get; }
 
     // ─── Hot Wheels ───────────────────────────────────────────────────────
 
     [ObservableProperty] private string? _hwModelo;
-    [ObservableProperty] private int _hwAnio = DateTime.Now.Year;
+    [ObservableProperty] private string? _hwAnioTexto = DateTime.Now.Year.ToString(CultureInfo.InvariantCulture);
     [ObservableProperty] private string? _hwSerie;
     [ObservableProperty] private CatalogoItemDto? _hwCategoriaSeleccionada;
 
@@ -63,7 +65,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
     // ─── Funko ────────────────────────────────────────────────────────────
 
-    [ObservableProperty] private int _funkoNumeroBox;
+    [ObservableProperty] private string? _funkoNumeroBoxTexto = "0";
     [ObservableProperty] private string? _funkoLicencia;
     [ObservableProperty] private CatalogoItemDto? _funkoSubtipoSeleccionado;
     [ObservableProperty] private CatalogoItemDto? _funkoCaracteristicaSeleccionada;
@@ -83,17 +85,17 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
     // ─── Toy ──────────────────────────────────────────────────────────────
 
-    [ObservableProperty] private int _toyEdadMinima;
-    [ObservableProperty] private int _toyJugadoresMin = 1;
-    [ObservableProperty] private int _toyJugadoresMax = 1;
+    [ObservableProperty] private string? _toyEdadMinimaTexto = "0";
+    [ObservableProperty] private string? _toyJugadoresMinTexto = "1";
+    [ObservableProperty] private string? _toyJugadoresMaxTexto = "1";
     [ObservableProperty] private bool _toyEsJuegoMesa;
 
     // ─── Varios ───────────────────────────────────────────────────────────
 
     [ObservableProperty] private string? _variosMarca;
-    [ObservableProperty] private decimal _variosAlto;
-    [ObservableProperty] private decimal _variosAncho;
-    [ObservableProperty] private decimal? _variosLargo;
+    [ObservableProperty] private string? _variosAltoTexto = "0";
+    [ObservableProperty] private string? _variosAnchoTexto = "0";
+    [ObservableProperty] private string? _variosLargoTexto;
     [ObservableProperty] private string? _variosMaterial;
     [ObservableProperty] private bool _variosTieneIlustracion;
 
@@ -129,17 +131,19 @@ public partial class CrearProductoViewModel : ValidatableViewModel
 
         NombreValidation = RegisterFieldValidation(nameof(Nombre), ValidateNombre);
         PrecioValidation = RegisterFieldValidation(nameof(PrecioTexto), ValidatePrecio);
-        UnidadesValidation = RegisterFieldValidation(nameof(Unidades), ValidateUnidades);
+        UnidadesValidation = RegisterFieldValidation(nameof(UnidadesTexto), ValidateUnidades);
         HwModeloValidation = RegisterFieldValidation(nameof(HwModelo), ValidateHwModelo);
-        HwAnioValidation = RegisterFieldValidation(nameof(HwAnio), ValidateHwAnio);
+        HwAnioValidation = RegisterFieldValidation(nameof(HwAnioTexto), ValidateHwAnio);
         HwSerieValidation = RegisterFieldValidation(nameof(HwSerie), ValidateHwSerie);
-        FunkoNumeroBoxValidation = RegisterFieldValidation(nameof(FunkoNumeroBox), ValidateFunkoNumeroBox);
+        FunkoNumeroBoxValidation = RegisterFieldValidation(nameof(FunkoNumeroBoxTexto), ValidateFunkoNumeroBox);
         FunkoLicenciaValidation = RegisterFieldValidation(nameof(FunkoLicencia), ValidateFunkoLicencia);
-        ToyJugadoresMinValidation = RegisterFieldValidation(nameof(ToyJugadoresMin), ValidateToyJugadoresMin);
-        ToyJugadoresMaxValidation = RegisterFieldValidation(nameof(ToyJugadoresMax), ValidateToyJugadoresMax);
+        ToyEdadMinimaValidation = RegisterFieldValidation(nameof(ToyEdadMinimaTexto), ValidateToyEdadMinima);
+        ToyJugadoresMinValidation = RegisterFieldValidation(nameof(ToyJugadoresMinTexto), ValidateToyJugadoresMin);
+        ToyJugadoresMaxValidation = RegisterFieldValidation(nameof(ToyJugadoresMaxTexto), ValidateToyJugadoresMax);
         VariosMarcaValidation = RegisterFieldValidation(nameof(VariosMarca), ValidateVariosMarca);
-        VariosAltoValidation = RegisterFieldValidation(nameof(VariosAlto), ValidateVariosAlto);
-        VariosAnchoValidation = RegisterFieldValidation(nameof(VariosAncho), ValidateVariosAncho);
+        VariosAltoValidation = RegisterFieldValidation(nameof(VariosAltoTexto), ValidateVariosAlto);
+        VariosAnchoValidation = RegisterFieldValidation(nameof(VariosAnchoTexto), ValidateVariosAncho);
+        VariosLargoValidation = RegisterFieldValidation(nameof(VariosLargoTexto), ValidateVariosLargo);
         VariosMaterialValidation = RegisterFieldValidation(nameof(VariosMaterial), ValidateVariosMaterial);
 
         TipoSeleccionado = TiposDisponibles[0];
@@ -230,32 +234,34 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     {
         yield return nameof(Nombre);
         yield return nameof(PrecioTexto);
-        yield return nameof(Unidades);
+        yield return nameof(UnidadesTexto);
 
         if (MostrarHotWheels)
         {
             yield return nameof(HwModelo);
-            yield return nameof(HwAnio);
+            yield return nameof(HwAnioTexto);
             yield return nameof(HwSerie);
         }
 
         if (MostrarFunko)
         {
-            yield return nameof(FunkoNumeroBox);
+            yield return nameof(FunkoNumeroBoxTexto);
             yield return nameof(FunkoLicencia);
         }
 
         if (MostrarToy)
         {
-            yield return nameof(ToyJugadoresMin);
-            yield return nameof(ToyJugadoresMax);
+            yield return nameof(ToyEdadMinimaTexto);
+            yield return nameof(ToyJugadoresMinTexto);
+            yield return nameof(ToyJugadoresMaxTexto);
         }
 
         if (MostrarVarios)
         {
             yield return nameof(VariosMarca);
-            yield return nameof(VariosAlto);
-            yield return nameof(VariosAncho);
+            yield return nameof(VariosAltoTexto);
+            yield return nameof(VariosAnchoTexto);
+            yield return nameof(VariosLargoTexto);
             yield return nameof(VariosMaterial);
         }
     }
@@ -263,15 +269,17 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     private static IEnumerable<string> GetCamposPorTipo()
     {
         yield return nameof(HwModelo);
-        yield return nameof(HwAnio);
+        yield return nameof(HwAnioTexto);
         yield return nameof(HwSerie);
-        yield return nameof(FunkoNumeroBox);
+        yield return nameof(FunkoNumeroBoxTexto);
         yield return nameof(FunkoLicencia);
-        yield return nameof(ToyJugadoresMin);
-        yield return nameof(ToyJugadoresMax);
+        yield return nameof(ToyEdadMinimaTexto);
+        yield return nameof(ToyJugadoresMinTexto);
+        yield return nameof(ToyJugadoresMaxTexto);
         yield return nameof(VariosMarca);
-        yield return nameof(VariosAlto);
-        yield return nameof(VariosAncho);
+        yield return nameof(VariosAltoTexto);
+        yield return nameof(VariosAnchoTexto);
+        yield return nameof(VariosLargoTexto);
         yield return nameof(VariosMaterial);
     }
 
@@ -301,42 +309,59 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         NumberStyles.AllowDecimalPoint,
         CultureInfo.InvariantCulture);
 
-    private string? ValidateUnidades() => Unidades < _validationRules.UnidadesMinimas
+    private string? ValidateUnidades() => !TryParseInt(UnidadesTexto, out var unidades) ||
+                                          unidades < _validationRules.UnidadesMinimas
         ? "*Unidades inválidas"
         : null;
 
     private string? ValidateHwModelo() => ValidateTextoDetalle(HwModelo, "*Modelo inválido");
 
-    private string? ValidateHwAnio() => HwAnio < _validationRules.HotWheelsAnioMinimo ||
-                                        HwAnio > _validationRules.HotWheelsAnioMaximo
+    private string? ValidateHwAnio() => !TryParseInt(HwAnioTexto, out var anio) ||
+                                        anio < _validationRules.HotWheelsAnioMinimo ||
+                                        anio > _validationRules.HotWheelsAnioMaximo
         ? "*Año inválido"
         : null;
 
     private string? ValidateHwSerie() => ValidateTextoDetalle(HwSerie, "*Serie inválida");
 
-    private string? ValidateFunkoNumeroBox() => FunkoNumeroBox < _validationRules.FunkoNumeroCajaMinimo
+    private string? ValidateFunkoNumeroBox() => !TryParseInt(FunkoNumeroBoxTexto, out var numeroBox) ||
+                                                numeroBox < _validationRules.FunkoNumeroCajaMinimo
         ? "*Número de caja inválido"
         : null;
 
     private string? ValidateFunkoLicencia() => ValidateTextoDetalle(FunkoLicencia, "*Licencia inválida");
 
-    private string? ValidateToyJugadoresMin() => ToyJugadoresMin < _validationRules.ToyJugadoresMinimo
+    private string? ValidateToyEdadMinima() => !TryParseInt(ToyEdadMinimaTexto, out var edadMinima) || edadMinima < 0
+        ? "*Edad mínima inválida"
+        : null;
+
+    private string? ValidateToyJugadoresMin() => !TryParseInt(ToyJugadoresMinTexto, out var jugadoresMin) ||
+                                                jugadoresMin < _validationRules.ToyJugadoresMinimo
         ? "*Jugadores mínimos inválido"
         : null;
 
-    private string? ValidateToyJugadoresMax() => ToyJugadoresMax < ToyJugadoresMin
+    private string? ValidateToyJugadoresMax() => !TryParseInt(ToyJugadoresMinTexto, out var jugadoresMin) ||
+                                                !TryParseInt(ToyJugadoresMaxTexto, out var jugadoresMax) ||
+                                                jugadoresMax < jugadoresMin
         ? "*Jugadores máximos inválido"
         : null;
 
     private string? ValidateVariosMarca() => ValidateTextoDetalle(VariosMarca, "*Marca inválida");
 
-    private string? ValidateVariosAlto() => VariosAlto < _validationRules.DimensionMinima
+    private string? ValidateVariosAlto() => !TryParseDecimal(VariosAltoTexto, out var alto) ||
+                                           alto < _validationRules.DimensionMinima
         ? "*Alto inválido"
         : null;
 
-    private string? ValidateVariosAncho() => VariosAncho < _validationRules.DimensionMinima
+    private string? ValidateVariosAncho() => !TryParseDecimal(VariosAnchoTexto, out var ancho) ||
+                                            ancho < _validationRules.DimensionMinima
         ? "*Ancho inválido"
         : null;
+
+    private string? ValidateVariosLargo() => string.IsNullOrWhiteSpace(VariosLargoTexto) ||
+                                            TryParseDecimal(VariosLargoTexto, out _)
+        ? null
+        : "*Largo inválido";
 
     private string? ValidateVariosMaterial() => ValidateTextoDetalle(VariosMaterial, "*Material inválido");
 
@@ -350,24 +375,41 @@ public partial class CrearProductoViewModel : ValidatableViewModel
             : null;
     }
 
+    private static bool TryParseInt(string? value, out int result) =>
+        int.TryParse(value?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out result);
+
+    private static int ParseInt(string? value) =>
+        int.Parse(value!.Trim(), NumberStyles.None, CultureInfo.InvariantCulture);
+
+    private static bool TryParseDecimal(string? value, out decimal result) =>
+        decimal.TryParse(value?.Trim(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out result);
+
+    private static decimal ParseDecimal(string? value) =>
+        decimal.Parse(value!.Trim(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+
+    private static decimal? ParseOptionalDecimal(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : ParseDecimal(value);
+
     partial void OnNombreChanged(string? value) => ClearFieldValidation(nameof(Nombre));
     partial void OnPrecioTextoChanged(string? value) => ClearFieldValidation(nameof(PrecioTexto));
-    partial void OnUnidadesChanged(int value) => ClearFieldValidation(nameof(Unidades));
+    partial void OnUnidadesTextoChanged(string? value) => ClearFieldValidation(nameof(UnidadesTexto));
     partial void OnHwModeloChanged(string? value) => ClearFieldValidation(nameof(HwModelo));
-    partial void OnHwAnioChanged(int value) => ClearFieldValidation(nameof(HwAnio));
+    partial void OnHwAnioTextoChanged(string? value) => ClearFieldValidation(nameof(HwAnioTexto));
     partial void OnHwSerieChanged(string? value) => ClearFieldValidation(nameof(HwSerie));
-    partial void OnFunkoNumeroBoxChanged(int value) => ClearFieldValidation(nameof(FunkoNumeroBox));
+    partial void OnFunkoNumeroBoxTextoChanged(string? value) => ClearFieldValidation(nameof(FunkoNumeroBoxTexto));
     partial void OnFunkoLicenciaChanged(string? value) => ClearFieldValidation(nameof(FunkoLicencia));
-    partial void OnToyJugadoresMinChanged(int value)
+    partial void OnToyEdadMinimaTextoChanged(string? value) => ClearFieldValidation(nameof(ToyEdadMinimaTexto));
+    partial void OnToyJugadoresMinTextoChanged(string? value)
     {
-        ClearFieldValidation(nameof(ToyJugadoresMin));
-        ClearFieldValidation(nameof(ToyJugadoresMax));
+        ClearFieldValidation(nameof(ToyJugadoresMinTexto));
+        ClearFieldValidation(nameof(ToyJugadoresMaxTexto));
     }
 
-    partial void OnToyJugadoresMaxChanged(int value) => ClearFieldValidation(nameof(ToyJugadoresMax));
+    partial void OnToyJugadoresMaxTextoChanged(string? value) => ClearFieldValidation(nameof(ToyJugadoresMaxTexto));
     partial void OnVariosMarcaChanged(string? value) => ClearFieldValidation(nameof(VariosMarca));
-    partial void OnVariosAltoChanged(decimal value) => ClearFieldValidation(nameof(VariosAlto));
-    partial void OnVariosAnchoChanged(decimal value) => ClearFieldValidation(nameof(VariosAncho));
+    partial void OnVariosAltoTextoChanged(string? value) => ClearFieldValidation(nameof(VariosAltoTexto));
+    partial void OnVariosAnchoTextoChanged(string? value) => ClearFieldValidation(nameof(VariosAnchoTexto));
+    partial void OnVariosLargoTextoChanged(string? value) => ClearFieldValidation(nameof(VariosLargoTexto));
     partial void OnVariosMaterialChanged(string? value) => ClearFieldValidation(nameof(VariosMaterial));
 
     // ─── Guardar ──────────────────────────────────────────────────────────
@@ -411,16 +453,16 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     {
         Nombre = Nombre!,
         Precio = ParsePrecio(),
-        Unidades = Unidades,
+        Unidades = ParseInt(UnidadesTexto),
         Tipo = TipoSeleccionado!.Valor!.Value,
 
         HotWheels = MostrarHotWheels && HwCategoriaSeleccionada is not null
-            ? new CrearHotWheelsDetalleDto(HwModelo!, HwAnio, HwSerie!, HwCategoriaSeleccionada.Id)
+            ? new CrearHotWheelsDetalleDto(HwModelo!, ParseInt(HwAnioTexto), HwSerie!, HwCategoriaSeleccionada.Id)
             : null,
 
         Funko = MostrarFunko && FunkoSubtipoSeleccionado is not null
             ? new CrearFunkoDetalleDto(
-                FunkoNumeroBox, FunkoLicencia!,
+                ParseInt(FunkoNumeroBoxTexto), FunkoLicencia!,
                 FunkoSubtipoSeleccionado.Id,
                 FunkoCaracteristicaSeleccionada?.Id)
             : null,
@@ -430,13 +472,17 @@ public partial class CrearProductoViewModel : ValidatableViewModel
             : null,
 
         Toy = MostrarToy
-            ? new CrearToyDetalleDto(ToyEdadMinima, ToyJugadoresMin, ToyJugadoresMax, ToyEsJuegoMesa)
+            ? new CrearToyDetalleDto(
+                ParseInt(ToyEdadMinimaTexto),
+                ParseInt(ToyJugadoresMinTexto),
+                ParseInt(ToyJugadoresMaxTexto),
+                ToyEsJuegoMesa)
             : null,
 
         Varios = MostrarVarios
             ? new CrearVariosDetalleDto(
-                VariosMarca!, VariosAlto, VariosAncho,
-                VariosLargo, VariosMaterial!, VariosTieneIlustracion)
+                VariosMarca!, ParseDecimal(VariosAltoTexto), ParseDecimal(VariosAnchoTexto),
+                ParseOptionalDecimal(VariosLargoTexto), VariosMaterial!, VariosTieneIlustracion)
             : null
     };
 
