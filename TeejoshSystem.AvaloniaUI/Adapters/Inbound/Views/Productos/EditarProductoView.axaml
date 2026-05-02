@@ -35,13 +35,12 @@
                 <!-- Precio -->
                 <StackPanel Spacing="4">
                     <TextBlock Classes="FieldLabel" Text="Precio"/>
-                    <NumericUpDown Value="{Binding Precio, UpdateSourceTrigger=PropertyChanged}"
-                                   FormatString="F2"
-                                   Increment="0.5"
-                                   validation:ValidationField.FieldName="Precio"
-                                   validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
-                                   validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
-                                   validation:ValidationField.IsInvalid="{Binding PrecioValidation.HasError}"/>
+                    <TextBox Text="{Binding PrecioTexto, UpdateSourceTrigger=PropertyChanged}"
+                             Watermark="Ej: 152.79"
+                             validation:ValidationField.FieldName="PrecioTexto"
+                             validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
+                             validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
+                             validation:ValidationField.IsInvalid="{Binding PrecioValidation.HasError}"/>
                     <TextBlock Classes="ValidationError"
                                Text="{Binding PrecioValidation.ErrorMessage}"
                                IsVisible="{Binding PrecioValidation.HasError}"/>

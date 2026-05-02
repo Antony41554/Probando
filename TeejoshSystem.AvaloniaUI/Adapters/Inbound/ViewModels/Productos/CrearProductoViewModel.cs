@@ -5,7 +5,9 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 using TeejoshSystem.Application.Common.Dtos;
 using TeejoshSystem.Application.Ports.Inbound.Catalogos.Queries.ObtenerCatalogos;
@@ -28,7 +30,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     // ─── Campos comunes ───────────────────────────────────────────────────
 
     [ObservableProperty] private string? _nombre;
-    [ObservableProperty] private decimal _precio;
+    [ObservableProperty] private string? _precioTexto = "0.00";
     [ObservableProperty] private int _unidades;
     [ObservableProperty] private TipoProductoFiltroItem? _tipoSeleccionado;
     [ObservableProperty] private bool _catalogosCargados;
@@ -126,7 +128,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
         _navigation = navigation;
 
         NombreValidation = RegisterFieldValidation(nameof(Nombre), ValidateNombre);
-        PrecioValidation = RegisterFieldValidation(nameof(Precio), ValidatePrecio);
+        PrecioValidation = RegisterFieldValidation(nameof(PrecioTexto), ValidatePrecio);
         UnidadesValidation = RegisterFieldValidation(nameof(Unidades), ValidateUnidades);
         HwModeloValidation = RegisterFieldValidation(nameof(HwModelo), ValidateHwModelo);
         HwAnioValidation = RegisterFieldValidation(nameof(HwAnio), ValidateHwAnio);
@@ -227,7 +229,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     private IEnumerable<string> GetCamposActivos()
     {
         yield return nameof(Nombre);
-        yield return nameof(Precio);
+        yield return nameof(PrecioTexto);
         yield return nameof(Unidades);
 
         if (MostrarHotWheels)
@@ -283,9 +285,21 @@ public partial class CrearProductoViewModel : ValidatableViewModel
             : null;
     }
 
-    private string? ValidatePrecio() => Precio < _validationRules.PrecioMinimo
-        ? "*Precio inválido"
-        : null;
+    private string? ValidatePrecio()
+    {
+        if (string.IsNullOrWhiteSpace(PrecioTexto) ||
+            !Regex.IsMatch(PrecioTexto.Trim(), _validationRules.PrecioFormatoPattern, RegexOptions.CultureInvariant))
+            return _validationRules.PrecioFormatoMensaje;
+
+        return ParsePrecio() < _validationRules.PrecioMinimo
+            ? "*Precio inválido"
+            : null;
+    }
+
+    private decimal ParsePrecio() => decimal.Parse(
+        PrecioTexto!.Trim(),
+        NumberStyles.AllowDecimalPoint,
+        CultureInfo.InvariantCulture);
 
     private string? ValidateUnidades() => Unidades < _validationRules.UnidadesMinimas
         ? "*Unidades inválidas"
@@ -337,7 +351,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     }
 
     partial void OnNombreChanged(string? value) => ClearFieldValidation(nameof(Nombre));
-    partial void OnPrecioChanged(decimal value) => ClearFieldValidation(nameof(Precio));
+    partial void OnPrecioTextoChanged(string? value) => ClearFieldValidation(nameof(PrecioTexto));
     partial void OnUnidadesChanged(int value) => ClearFieldValidation(nameof(Unidades));
     partial void OnHwModeloChanged(string? value) => ClearFieldValidation(nameof(HwModelo));
     partial void OnHwAnioChanged(int value) => ClearFieldValidation(nameof(HwAnio));
@@ -396,7 +410,7 @@ public partial class CrearProductoViewModel : ValidatableViewModel
     private CrearProductoCommand ConstruirCommand() => new()
     {
         Nombre = Nombre!,
-        Precio = Precio,
+        Precio = ParsePrecio(),
         Unidades = Unidades,
         Tipo = TipoSeleccionado!.Valor!.Value,
 

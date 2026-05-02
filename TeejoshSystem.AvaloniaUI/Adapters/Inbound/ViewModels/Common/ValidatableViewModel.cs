@@ -1,13 +1,11 @@
-using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Common
 {
-    public abstract class ValidatableViewModel : ViewModelBase, INotifyDataErrorInfo
+    public abstract class ValidatableViewModel : ViewModelBase
     {
         private readonly Dictionary<string, List<string>> _errors = new();
         private readonly Dictionary<string, Func<string?>> _validators = new();
@@ -24,26 +22,7 @@ namespace TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Common
 
         public bool HasErrors => _errors.Any();
 
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
-        public IEnumerable GetErrors(string? propertyName)
-        {
-            if (string.IsNullOrEmpty(propertyName))
-                return Enumerable.Empty<string>();
-
-            return _errors.TryGetValue(propertyName, out var errors)
-                ? errors
-                : Enumerable.Empty<string>();
-        }
-
-        /// <summary>
-        /// Devuelve el primer mensaje de error de una propiedad, o null si no hay errores.
-        /// Uso: exponer como propiedad pública en el ViewModel concreto para binding en XAML.
-        /// </summary>
-        protected string? GetFirstError(string propertyName) =>
-            _errors.TryGetValue(propertyName, out var list)
-                ? list.FirstOrDefault()
-                : null;
+        public event EventHandler? ErrorsChanged;
 
         protected FieldValidationState RegisterFieldValidation(
             string propertyName,
@@ -127,9 +106,7 @@ namespace TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Common
 
         protected void OnErrorsChanged(string propertyName)
         {
-            ErrorsChanged?.Invoke(
-                this,
-                new DataErrorsChangedEventArgs(propertyName));
+            ErrorsChanged?.Invoke(this, EventArgs.Empty);
 
             OnPropertyChanged(nameof(HasErrors));
             OnPropertyChanged(nameof(ResumenErrores));

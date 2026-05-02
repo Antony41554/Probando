@@ -1,5 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviors="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.Behaviors">
 
     <Styles.Resources>
         <Color x:Key="BrandColor">#FF9800</Color>
@@ -37,6 +38,10 @@
         <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
         <Setter Property="BorderThickness" Value="1.5"/>
         <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+    </Style>
+
+    <Style Selector="ComboBox">
+        <Setter Property="behaviors:SelectionWheelBlocker.IsEnabled" Value="True"/>
     </Style>
 
     <!-- MENSAJE ERROR -->

@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
 
+using System.Globalization;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 using TeejoshSystem.Application.Ports.Inbound.Productos.Commands.ActualizarProducto;
 using TeejoshSystem.AvaloniaUI.Adapters.Inbound.Services;
@@ -26,7 +28,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     // ─── Propiedades del formulario ───────────────────────────────────────
 
     [ObservableProperty] private string? _nombre;
-    [ObservableProperty] private decimal _precio;
+    [ObservableProperty] private string? _precioTexto = "0.00";
     [ObservableProperty] private int _unidades;
 
     // ─── Estado visual de validación ──────────────────────────────────────
@@ -55,7 +57,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
         _tipo = tipo;
 
         NombreValidation = RegisterFieldValidation(nameof(Nombre), ValidateNombre);
-        PrecioValidation = RegisterFieldValidation(nameof(Precio), ValidatePrecio);
+        PrecioValidation = RegisterFieldValidation(nameof(PrecioTexto), ValidatePrecio);
         UnidadesValidation = RegisterFieldValidation(nameof(Unidades), ValidateUnidades);
 
         ErrorsChanged += (_, _) => GuardarCommand.NotifyCanExecuteChanged();
@@ -76,7 +78,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     private bool ValidarFormulario() => ValidateFields(new[]
     {
         nameof(Nombre),
-        nameof(Precio),
+        nameof(PrecioTexto),
         nameof(Unidades)
     });
 
@@ -90,16 +92,28 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
             : null;
     }
 
-    private string? ValidatePrecio() => Precio < _validationRules.PrecioMinimo
-        ? "*Precio inválido"
-        : null;
+    private string? ValidatePrecio()
+    {
+        if (string.IsNullOrWhiteSpace(PrecioTexto) ||
+            !Regex.IsMatch(PrecioTexto.Trim(), _validationRules.PrecioFormatoPattern, RegexOptions.CultureInvariant))
+            return _validationRules.PrecioFormatoMensaje;
+
+        return ParsePrecio() < _validationRules.PrecioMinimo
+            ? "*Precio inválido"
+            : null;
+    }
+
+    private decimal ParsePrecio() => decimal.Parse(
+        PrecioTexto!.Trim(),
+        NumberStyles.AllowDecimalPoint,
+        CultureInfo.InvariantCulture);
 
     private string? ValidateUnidades() => Unidades < _validationRules.UnidadesMinimas
         ? "*Unidades inválidas"
         : null;
 
     partial void OnNombreChanged(string? value) => ClearFieldValidation(nameof(Nombre));
-    partial void OnPrecioChanged(decimal value) => ClearFieldValidation(nameof(Precio));
+    partial void OnPrecioTextoChanged(string? value) => ClearFieldValidation(nameof(PrecioTexto));
     partial void OnUnidadesChanged(int value) => ClearFieldValidation(nameof(Unidades));
 
     // ─── Comandos ─────────────────────────────────────────────────────────
@@ -127,7 +141,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
                 new ActualizarProductoCommand(
                     _productoId,
                     Nombre!,
-                    Precio,
+                    ParsePrecio(),
                     Unidades));
 
             if (result.IsSuccess)
