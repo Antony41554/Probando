@@ -7,15 +7,21 @@ public sealed class ThemeService : IThemeService
 {
     public ThemeMode CurrentMode { get; private set; } = ThemeMode.System;
 
+    public ThemeVariant CurrentThemeVariant { get; private set; } = ThemeVariant.Default;
+
     public void Apply(ThemeMode mode)
     {
         CurrentMode = mode;
+        CurrentThemeVariant = ToThemeVariant(mode);
 
-        Avalonia.Application.Current!.RequestedThemeVariant = mode switch
-        {
-            ThemeMode.Light => ThemeVariant.Light,
-            ThemeMode.Dark => ThemeVariant.Dark,
-            _ => ThemeVariant.Default
-        };
+        if (global::Avalonia.Application.Current is not null)
+            global::Avalonia.Application.Current.RequestedThemeVariant = CurrentThemeVariant;
     }
+
+    public ThemeVariant ToThemeVariant(ThemeMode mode) => mode switch
+    {
+        ThemeMode.Light => ThemeVariant.Light,
+        ThemeMode.Dark => ThemeVariant.Dark,
+        _ => ThemeVariant.Default
+    };
 }

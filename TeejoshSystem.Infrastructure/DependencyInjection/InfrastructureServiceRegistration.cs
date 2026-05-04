@@ -16,6 +16,7 @@ namespace TeejoshSystem.Infrastructure.DependencyInjection
 
             services.AddScoped<IProductoRepository, ProductoRepository>();
             services.AddScoped<ICatalogoRepository, CatalogoRepository>();
+            services.AddScoped<IVentaRepository, VentaRepository>();
 
             return services;
         }

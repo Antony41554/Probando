@@ -1,8 +1,8 @@
 ﻿using MediatR;
-
-using TeejoshSystem.Domain.ValueObjects;
-using TeejoshSystem.Domain.Ports.Outbound.Repositories;
+using System;
 using TeejoshSystem.Application.Common;
+using TeejoshSystem.Domain.Ports.Outbound.Repositories;
+using TeejoshSystem.Domain.ValueObjects;
 
 namespace TeejoshSystem.Application.Ports.Inbound.Productos.Commands.ActualizarProducto
 {
@@ -34,6 +34,18 @@ namespace TeejoshSystem.Application.Ports.Inbound.Productos.Commands.ActualizarP
                 await _repository.UpdateAsync(producto);
 
                 return Result.Success();
+            }
+            catch (ArgumentException ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+
+                return Result.Failure(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+
+                return Result.Failure(ex.Message);
             }
             catch (Exception ex)
             {

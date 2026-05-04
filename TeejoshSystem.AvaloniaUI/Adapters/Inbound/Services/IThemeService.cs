@@ -1,3 +1,5 @@
+using Avalonia.Styling;
+
 namespace TeejoshSystem.AvaloniaUI.Adapters.Inbound.Services;
 
 public enum ThemeMode
@@ -10,5 +12,7 @@ public enum ThemeMode
 public interface IThemeService
 {
     ThemeMode CurrentMode { get; }
+    ThemeVariant CurrentThemeVariant { get; }
     void Apply(ThemeMode mode);
+    ThemeVariant ToThemeVariant(ThemeMode mode);
 }

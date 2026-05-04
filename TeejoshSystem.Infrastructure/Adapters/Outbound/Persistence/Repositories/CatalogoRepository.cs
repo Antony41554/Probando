@@ -66,5 +66,19 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Repositorie
                 .OrderBy(p => p.Nombre)
                 .ToListAsync();
         }
+
+        public async Task<TcgExpansion?> GetTcgExpansionByIdAsync(int expansionId)
+        {
+            return await _context.TcgExpansiones
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == expansionId);
+        }
+
+        public async Task<TcgPack?> GetTcgPackByIdAsync(int packId)
+        {
+            return await _context.TcgPacks
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == packId);
+        }
     }
 }

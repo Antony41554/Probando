@@ -1,45 +1,45 @@
+<!-- dotnet ef migrations add InitialCreate __project TeejoshSystem.Infrastructure __startup-project TeejoshSystem.AvaloniaUI __output-dir Adapters/Outbound/Persistence/Migrations -->
+<!-- dotnet ef database update __project TeejoshSystem.Infrastructure __startup-project TeejoshSystem.AvaloniaUI -->
+
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:conv="clr-namespace:TeejoshSystem.AvaloniaUI.Converters"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vmMenu="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Menu"
              xmlns:vmProductos="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos"
              xmlns:viewsMenu="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Menu"
              xmlns:viewsProductos="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Productos"
-             x:Class="TeejoshSystem.AvaloniaUI.App">
-
-    <!-- 
-        RequestedThemeVariant eliminado intencionalmente.
-        Avalonia respeta la preferencia del sistema operativo por defecto.
-        Para forzar un tema específico en el futuro, usar ThemeVariant.Light o ThemeVariant.Dark
-        desde App.axaml.cs en respuesta a configuración del usuario.
-    -->
-
-    <Application.Styles>
-        <FluentTheme />
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+             xmlns:vmVentas="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Ventas"
+			 xmlns:viewsVentas="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Ventas"
+			 x:Class="TeejoshSystem.AvaloniaUI.App"
+             RequestedThemeVariant="{Binding ThemeVariant}">
+	
+	<Application.Styles>
+		<FluentTheme />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
         <StyleInclude Source="avares://TeejoshSystem.AvaloniaUI/AppStyles.axaml"/>
-    </Application.Styles>
+	</Application.Styles>
 
-    <Application.DataTemplates>
-        <DataTemplate DataType="{x:Type vmMenu:MenuPrincipalViewModel}">
-            <viewsMenu:MenuPrincipalView />
-        </DataTemplate>
+	<Application.DataTemplates>
+		<DataTemplate DataType="{x:Type vmMenu:MenuPrincipalViewModel}">
+			<viewsMenu:MenuPrincipalView />
+		</DataTemplate>
 
-        <DataTemplate DataType="{x:Type vmProductos:InventarioViewModel}">
-            <viewsProductos:InventarioView />
-        </DataTemplate>
-
+		<DataTemplate DataType="{x:Type vmProductos:InventarioViewModel}">
+			<viewsProductos:InventarioView />
+		</DataTemplate>
         <DataTemplate DataType="{x:Type vmProductos:GestionarProductosViewModel}">
             <viewsProductos:GestionarProductosView />
         </DataTemplate>
-
         <DataTemplate DataType="{x:Type vmProductos:CrearProductoViewModel}">
             <viewsProductos:CrearProductoView />
         </DataTemplate>
-
         <DataTemplate DataType="{x:Type vmProductos:EditarProductoViewModel}">
             <viewsProductos:EditarProductoView />
         </DataTemplate>
-    </Application.DataTemplates>
-
+		<DataTemplate DataType="{x:Type vmVentas:RegistrarVentaViewModel}">
+			<viewsVentas:RegistrarVentaView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vmVentas:HistorialVentasViewModel}">
+			<viewsVentas:HistorialVentasView />
+		</DataTemplate>
+	</Application.DataTemplates>
 </Application>

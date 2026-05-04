@@ -6,20 +6,15 @@
              x:CompileBindings="False">
 
     <Grid RowDefinitions="Auto,*,Auto">
-
-        <!-- Header -->
         <Border Grid.Row="0" Classes="PageHeader">
             <TextBlock Text="Gestionar Productos"/>
         </Border>
 
-        <!-- Contenido -->
         <Border Grid.Row="1" Margin="16" Classes="ContentPanel">
             <Grid RowDefinitions="Auto,*">
-
-                <!-- Filtros -->
                 <StackPanel Grid.Row="0" Margin="24,24,24,16">
                     <TextBlock Classes="SectionTitle"
-                               Text="Búsqueda y Filtros"
+                               Text="Busqueda y Filtros"
                                Margin="0,0,0,16"/>
                     <Grid ColumnDefinitions="*,16,200,16,Auto">
                         <TextBox Grid.Column="0"
@@ -39,7 +34,6 @@
                     </Grid>
                 </StackPanel>
 
-                <!-- DataGrid -->
                 <DataGrid Grid.Row="1"
                           ItemsSource="{Binding Productos}"
                           SelectedItem="{Binding ProductoSeleccionado}"
@@ -48,30 +42,17 @@
                           IsReadOnly="True"
                           Margin="24,0,24,24">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID"
-                                            Binding="{Binding Id}"
-                                            Width="60"/>
-                        <DataGridTextColumn Header="Nombre"
-                                            Binding="{Binding Nombre}"
-                                            Width="2*"/>
-                        <DataGridTextColumn Header="Precio"
-                                            Binding="{Binding Precio, StringFormat=\{0:C\}}"
-                                            Width="100"/>
-                        <DataGridTextColumn Header="Stock"
-                                            Binding="{Binding Unidades}"
-                                            Width="80"/>
-                        <DataGridTextColumn Header="Tipo"
-                                            Binding="{Binding Tipo}"
-                                            Width="120"/>
-                        <DataGridTextColumn Header="Detalle"
-                                            Binding="{Binding DetalleResumen}"
-                                            Width="2*"/>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                        <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="2*"/>
+                        <DataGridTextColumn Header="Precio" Binding="{Binding Precio, StringFormat=\{0:C\}}" Width="100"/>
+                        <DataGridTextColumn Header="Stock" Binding="{Binding Unidades}" Width="80"/>
+                        <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="120"/>
+                        <DataGridTextColumn Header="Detalle" Binding="{Binding DetalleResumen}" Width="2*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
         </Border>
 
-        <!-- Footer -->
         <Border Grid.Row="2" Margin="16,0,16,16" Classes="FooterPanel">
             <Grid ColumnDefinitions="*,Auto,8,Auto,8,Auto">
                 <TextBlock VerticalAlignment="Center">
@@ -99,20 +80,16 @@
             </Grid>
         </Border>
 
-        <!-- Loading Overlay -->
         <Border Grid.RowSpan="3"
                 Classes="LoadingOverlay"
                 IsVisible="{Binding IsBusy}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ProgressBar IsIndeterminate="True"
-                             Width="64" Height="64"
-                             Margin="0,0,0,16"/>
+                <ProgressBar IsIndeterminate="True" Width="64" Height="64" Margin="0,0,0,16"/>
                 <TextBlock Text="Cargando..."
                            FontSize="16"
                            Foreground="White"
                            HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
-
     </Grid>
 </UserControl>

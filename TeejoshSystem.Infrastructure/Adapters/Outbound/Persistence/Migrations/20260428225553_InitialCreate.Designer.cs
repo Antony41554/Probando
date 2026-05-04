@@ -11,7 +11,7 @@ using TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence;
 namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
 {
     [DbContext(typeof(InventarioDbContext))]
-    [Migration("20260405235006_InitialCreate")]
+    [Migration("20260428225553_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -695,6 +695,42 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
                     b.HasDiscriminator().HasValue("VariosDetalle");
                 });
 
+            modelBuilder.Entity("TeejoshSystem.Domain.Entities.Detalles.VentaDetalle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("NombreProducto")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("product_name");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("unit_price");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("sale_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("sale_detail", (string)null);
+                });
+
             modelBuilder.Entity("TeejoshSystem.Domain.Entities.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -709,6 +745,26 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("product", (string)null);
+                });
+
+            modelBuilder.Entity("TeejoshSystem.Domain.Entities.Venta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("date");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("total");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("sale", (string)null);
                 });
 
             modelBuilder.Entity("TeejoshSystem.Domain.Entities.Detalles.FunkoDetalle", b =>
@@ -752,6 +808,15 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
                     b.HasOne("TeejoshSystem.Domain.Entities.Producto", null)
                         .WithOne()
                         .HasForeignKey("TeejoshSystem.Domain.Entities.Detalles.VariosDetalle", "ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TeejoshSystem.Domain.Entities.Detalles.VentaDetalle", b =>
+                {
+                    b.HasOne("TeejoshSystem.Domain.Entities.Venta", null)
+                        .WithMany("Detalles")
+                        .HasForeignKey("VentaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -819,6 +884,11 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
 
                     b.Navigation("Stock")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TeejoshSystem.Domain.Entities.Venta", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 #pragma warning restore 612, 618
         }

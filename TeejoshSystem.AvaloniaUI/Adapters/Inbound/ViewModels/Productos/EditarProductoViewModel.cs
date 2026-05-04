@@ -1,16 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
 
+using System;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using TeejoshSystem.Application.Ports.Inbound.Productos.Commands.ActualizarProducto;
+using TeejoshSystem.Application.Ports.Inbound.Productos.Queries.ObtenerProductosPorId;
 using TeejoshSystem.AvaloniaUI.Adapters.Inbound.Services;
 using TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Common;
 using TeejoshSystem.Domain.Enums;
-using static TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Common.ValidatableViewModel;
 
 namespace TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Productos;
 
@@ -25,19 +26,13 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     private readonly int _productoId;
     private readonly TipoProducto _tipo;
 
-    // ─── Propiedades del formulario ───────────────────────────────────────
-
     [ObservableProperty] private string? _nombre;
     [ObservableProperty] private string? _precioTexto = "0.00";
     [ObservableProperty] private string? _unidadesTexto = "0";
 
-    // ─── Estado visual de validación ──────────────────────────────────────
-
     public FieldValidationState NombreValidation { get; }
     public FieldValidationState PrecioValidation { get; }
     public FieldValidationState UnidadesValidation { get; }
-
-    // ─── Constructor ──────────────────────────────────────────────────────
 
     public EditarProductoViewModel(
         IMediator mediator,
@@ -70,10 +65,38 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
     public void OnLoaded()
     {
-        // Pendiente: implementar cuando exista ObtenerProductoPorIdQuery
+        _ = CargarProductoAsync();
     }
 
-    // ─── Validación: limpiar al entrar/escribir, validar al salir ─────────
+    private async Task CargarProductoAsync()
+    {
+        try
+        {
+            IsBusy = true;
+
+            var result = await _mediator.Send(new ObtenerProductosPorIdQuery(_productoId));
+
+            if (!result.IsSuccess)
+            {
+                await _notification.ShowErrorAsync(result.Error ?? "No se pudo cargar el producto.");
+                return;
+            }
+
+            var dto = result.Value;
+            Nombre = dto.Nombre;
+            PrecioTexto = dto.Precio.ToString("0.00", CultureInfo.InvariantCulture);
+            UnidadesTexto = dto.Unidades.ToString(CultureInfo.InvariantCulture);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex);
+            await _notification.ShowErrorAsync("Error inesperado al cargar el producto.");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     private bool ValidarFormulario() => ValidateFields(new[]
     {
@@ -85,7 +108,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     private string? ValidateNombre()
     {
         if (string.IsNullOrWhiteSpace(Nombre))
-            return "*Nombre inválido";
+            return "*Nombre invalido";
 
         return Nombre.Trim().Length > _validationRules.NombreMaxLength
             ? $"*El nombre no puede superar los {_validationRules.NombreMaxLength} caracteres"
@@ -99,7 +122,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
             return _validationRules.PrecioFormatoMensaje;
 
         return ParsePrecio() < _validationRules.PrecioMinimo
-            ? "*Precio inválido"
+            ? "*Precio invalido"
             : null;
     }
 
@@ -110,7 +133,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
 
     private string? ValidateUnidades() => !TryParseInt(UnidadesTexto, out var unidades) ||
                                           unidades < _validationRules.UnidadesMinimas
-        ? "*Unidades inválidas"
+        ? "*Unidades invalidas"
         : null;
 
     private static bool TryParseInt(string? value, out int result) =>
@@ -122,8 +145,6 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
     partial void OnNombreChanged(string? value) => ClearFieldValidation(nameof(Nombre));
     partial void OnPrecioTextoChanged(string? value) => ClearFieldValidation(nameof(PrecioTexto));
     partial void OnUnidadesTextoChanged(string? value) => ClearFieldValidation(nameof(UnidadesTexto));
-
-    // ─── Comandos ─────────────────────────────────────────────────────────
 
     [RelayCommand]
     private void Volver() => _navigation.NavigateTo(_gestionarVm);
@@ -160,7 +181,7 @@ public partial class EditarProductoViewModel : ValidatableViewModel, ILoadable
             else
             {
                 await _notification.ShowErrorAsync(
-                    result.Error ?? "Ocurrió un error al guardar el producto.");
+                    result.Error ?? "Ocurrio un error al guardar el producto.");
             }
         }
         finally

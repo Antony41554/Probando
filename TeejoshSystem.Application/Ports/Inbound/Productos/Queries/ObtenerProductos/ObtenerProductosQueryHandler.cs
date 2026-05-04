@@ -5,7 +5,9 @@ using TeejoshSystem.Domain.Ports.Outbound.Repositories;
 
 namespace TeejoshSystem.Application.Ports.Inbound.Productos.Queries.ObtenerProductos
 {
-    public class ObtenerProductosQueryHandler : IRequestHandler<ObtenerProductosQuery, IReadOnlyList<ProductoDto>>
+    public class ObtenerProductosQueryHandler
+            : IRequestHandler<ObtenerProductosQuery,
+              IReadOnlyList<ProductoDto>>
     {
         private readonly IProductoRepository _productoRepository;
 
