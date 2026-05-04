@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
@@ -54,10 +54,8 @@ public partial class App : Avalonia.Application
                 // ViewModels
                 services.AddSingleton<MainViewModel>();
                 services.AddSingleton<MenuPrincipalViewModel>();
-                // services.AddTransient<InventarioViewModel>();
                 services.AddTransient<GestionarProductosViewModel>();
                 services.AddTransient<CrearProductoViewModel>();
-                // services.AddTransient<EditarProductoViewModel>();
             })
             .Build();
 
@@ -68,14 +66,10 @@ public partial class App : Avalonia.Application
             db.Database.Migrate();
         }
 
-        // Configurar navegaci�n
+        // Configurar navegacion y tema global antes de mostrar la ventana.
         var navService = _host.Services.GetRequiredService<NavigationService>();
         var mainVm = _host.Services.GetRequiredService<MainViewModel>();
-
-        // Inicializar tema antes de renderizar la primera vista.
-        // Se resuelve vía código porque RequestedThemeVariant requiere un tipo ThemeVariant de Avalonia
-        // y nuestro ViewModel usa un enum custom (ThemeMode), además IThemeService ya encapsula
-        // la lógica de conversión y asignación al Application.Current.
+        DataContext = mainVm;
         mainVm.InitializeTheme();
 
         navService.Configure(
@@ -83,16 +77,17 @@ public partial class App : Avalonia.Application
             () => mainVm.CurrentView = _host.Services.GetRequiredService<MenuPrincipalViewModel>()
         );
 
-        // Navegar al men� inicial
+        // Navegar al menu inicial
         mainVm.CurrentView = _host.Services.GetRequiredService<MenuPrincipalViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainWindow = new MainWindow();
-            mainWindow.DataContext = _host.Services.GetRequiredService<MainViewModel>();
+            var mainWindow = new MainWindow
+            {
+                DataContext = mainVm
+            };
 
             desktop.MainWindow = mainWindow;
-
             desktop.Exit += (_, _) => _host.Dispose();
         }
 

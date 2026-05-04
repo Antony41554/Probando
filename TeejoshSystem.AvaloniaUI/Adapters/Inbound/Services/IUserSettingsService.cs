@@ -1,5 +1,3 @@
-using TeejoshSystem.AvaloniaUI.Adapters.Inbound.Services;
-
 namespace TeejoshSystem.AvaloniaUI.Adapters.Inbound.Services;
 
 public interface IUserSettingsService

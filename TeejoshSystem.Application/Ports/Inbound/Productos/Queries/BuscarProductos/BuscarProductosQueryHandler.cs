@@ -1,7 +1,5 @@
 ﻿using MediatR;
 
-using TeejoshSystem.Domain.Entities;
-using TeejoshSystem.Domain.Entities.Detalles;
 using TeejoshSystem.Domain.Ports.Outbound.Repositories;
 
 namespace TeejoshSystem.Application.Ports.Inbound.Productos.Queries.BuscarProductos

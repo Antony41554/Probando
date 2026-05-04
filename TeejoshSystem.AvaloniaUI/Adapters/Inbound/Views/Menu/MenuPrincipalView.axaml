@@ -2,17 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Menu"
              x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Menu.MenuPrincipalView"
-             x:DataType="vm:MenuPrincipalViewModel">
+             x:DataType="vm:MenuPrincipalViewModel"
+             x:CompileBindings="False">
 
     <Grid RowDefinitions="Auto,*,Auto">
-
-        <!-- Header -->
         <Border Grid.Row="0" Classes="PageHeader">
-            <TextBlock Text="Menú Principal"
-                       VerticalAlignment="Center"/>
+            <TextBlock Text="Menu Principal"/>
         </Border>
 
-        <!-- Contenido -->
         <StackPanel Grid.Row="1"
                     Margin="20"
                     Spacing="15"
@@ -32,12 +29,23 @@
                     HorizontalAlignment="Center"
                     Classes="StandardButton"/>
 
-            <Button Content="Añadir Producto"
+            <Button Content="Anadir Producto"
                     Command="{Binding AnadirProductoCommand}"
                     Width="220"
                     HorizontalAlignment="Center"
                     Classes="StandardButton"/>
-        </StackPanel>
 
+            <Button Content="Registrar Venta"
+                    Command="{Binding RegistrarVentaCommand}"
+                    Width="220"
+                    HorizontalAlignment="Center"
+                    Classes="SaleButton"/>
+
+            <Button Content="Historial de Ventas"
+                    Command="{Binding VerHistorialVentasCommand}"
+                    Width="220"
+                    HorizontalAlignment="Center"
+                    Classes="InfoButton"/>
+        </StackPanel>
     </Grid>
 </UserControl>

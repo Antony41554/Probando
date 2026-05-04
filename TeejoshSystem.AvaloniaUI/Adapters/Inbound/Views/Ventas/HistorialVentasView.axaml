@@ -1,0 +1,104 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:TeejoshSystem.AvaloniaUI.Adapters.Inbound.ViewModels.Ventas"
+             x:Class="TeejoshSystem.AvaloniaUI.Adapters.Inbound.Views.Ventas.HistorialVentasView"
+             x:DataType="vm:HistorialVentasViewModel"
+             x:CompileBindings="False">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Border Grid.Row="0" Classes="InfoHeader">
+            <TextBlock Text="Historial de Ventas"/>
+        </Border>
+
+        <Border Grid.Row="1" Margin="16" Classes="ContentPanel">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Row="0" Margin="24,24,24,16" Spacing="12">
+                    <TextBlock Text="Filtrar por fecha"
+                               Classes="SectionTitle"/>
+                    <Grid ColumnDefinitions="Auto,8,*,16,Auto,8,*,16,Auto,8,Auto">
+                        <TextBlock Grid.Column="0" Text="Desde:" VerticalAlignment="Center"/>
+                        <CalendarDatePicker Grid.Column="2"
+                                            SelectedDate="{Binding FechaDesde}"/>
+
+                        <TextBlock Grid.Column="4" Text="Hasta:" VerticalAlignment="Center"/>
+                        <CalendarDatePicker Grid.Column="6"
+                                            SelectedDate="{Binding FechaHasta}"/>
+
+                        <Button Grid.Column="8"
+                                Command="{Binding BuscarCommand}"
+                                Content="Filtrar"
+                                Classes="InfoButton"
+                                Padding="16,0"/>
+                        <Button Grid.Column="10"
+                                Command="{Binding LimpiarFiltrosCommand}"
+                                Content="Limpiar"
+                                Classes="StandardButton"
+                                Padding="16,0"/>
+                    </Grid>
+                </StackPanel>
+
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Ventas}"
+                          SelectedItem="{Binding VentaSeleccionada}"
+                          SelectionMode="Single"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Margin="24,0,24,0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                        <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="160"/>
+                        <DataGridTextColumn Header="Productos" Binding="{Binding Detalles.Count}" Width="90"/>
+                        <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=\{0:C\}}" Width="120"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Border Grid.Row="2"
+                        Margin="24,12,24,24"
+                        IsVisible="{Binding VentaSeleccionada, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Detalle de la venta seleccionada"
+                                   FontWeight="SemiBold"/>
+                        <DataGrid ItemsSource="{Binding VentaSeleccionada.Detalles}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  MaxHeight="180">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Producto" Binding="{Binding NombreProducto}" Width="2*"/>
+                                <DataGridTextColumn Header="Cant." Binding="{Binding Cantidad}" Width="60"/>
+                                <DataGridTextColumn Header="P.Unit." Binding="{Binding PrecioUnitario, StringFormat=\{0:C\}}" Width="100"/>
+                                <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal, StringFormat=\{0:C\}}" Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Margin="16,0,16,16" Classes="FooterPanel">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock VerticalAlignment="Center">
+                    <Run Text="Total ventas: "/>
+                    <Run Text="{Binding Ventas.Count, Mode=OneWay}"
+                         FontWeight="Bold"
+                         Foreground="{StaticResource InfoBrush}"/>
+                </TextBlock>
+                <Button Grid.Column="1"
+                        Command="{Binding VolverCommand}"
+                        Content="Volver"
+                        Classes="StandardButton"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.RowSpan="3"
+                Classes="LoadingOverlay"
+                IsVisible="{Binding IsBusy}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="64" Height="64" Margin="0,0,0,16"/>
+                <TextBlock Text="Cargando historial..."
+                           FontSize="16"
+                           Foreground="White"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

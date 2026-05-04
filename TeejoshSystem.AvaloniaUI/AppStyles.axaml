@@ -6,31 +6,27 @@
         <Color x:Key="BrandColor">#FF9800</Color>
         <Color x:Key="BrandDarkColor">#E65100</Color>
         <Color x:Key="DangerColor">#E53935</Color>
+        <Color x:Key="SaleColor">#43A047</Color>
+        <Color x:Key="InfoColor">#1565C0</Color>
         <Color x:Key="ErrorColor">#D32F2F</Color>
         <Color x:Key="ErrorBackgroundColor">#1FD32F2F</Color>
         <Color x:Key="OverlayColor">#CC000000</Color>
+        <Color x:Key="TitleBarColor">#2C3E50</Color>
 
         <SolidColorBrush x:Key="BrandBrush" Color="{StaticResource BrandColor}"/>
         <SolidColorBrush x:Key="BrandDarkBrush" Color="{StaticResource BrandDarkColor}"/>
         <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}"/>
+        <SolidColorBrush x:Key="SaleBrush" Color="{StaticResource SaleColor}"/>
+        <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
         <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
         <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource ErrorBackgroundColor}"/>
         <SolidColorBrush x:Key="OverlayBrush" Color="{StaticResource OverlayColor}"/>
+        <SolidColorBrush x:Key="TitleBarBrush" Color="{StaticResource TitleBarColor}"/>
     </Styles.Resources>
 
-    <!-- VALIDACIÓN -->
     <Style Selector="TextBox.validationError">
         <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
         <Setter Property="BorderThickness" Value="1.5"/>
-        <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
-    </Style>
-
-    <Style Selector="NumericUpDown.validationError">
-        <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
-        <Setter Property="BorderThickness" Value="1.5"/>
-    </Style>
-
-    <Style Selector="NumericUpDown.validationError /template/ TextBox">
         <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
     </Style>
 
@@ -44,7 +40,6 @@
         <Setter Property="behaviors:SelectionWheelBlocker.IsEnabled" Value="True"/>
     </Style>
 
-    <!-- MENSAJE ERROR -->
     <Style Selector="TextBlock.ValidationError">
         <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
         <Setter Property="FontSize" Value="11"/>
@@ -52,37 +47,42 @@
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
 
-    <!-- HEADER -->
     <Style Selector="Border.PageHeader">
         <Setter Property="Background" Value="{StaticResource BrandBrush}"/>
         <Setter Property="Padding" Value="24,16"/>
     </Style>
 
-    <Style Selector="Border.PageHeader TextBlock">
+    <Style Selector="Border.SaleHeader">
+        <Setter Property="Background" Value="{StaticResource SaleBrush}"/>
+        <Setter Property="Padding" Value="24,16"/>
+    </Style>
+
+    <Style Selector="Border.InfoHeader">
+        <Setter Property="Background" Value="{StaticResource InfoBrush}"/>
+        <Setter Property="Padding" Value="24,16"/>
+    </Style>
+
+    <Style Selector="Border.PageHeader TextBlock, Border.SaleHeader TextBlock, Border.InfoHeader TextBlock">
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
-    <!-- CONTENT -->
     <Style Selector="Border.ContentPanel">
         <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
         <Setter Property="CornerRadius" Value="4"/>
     </Style>
 
-    <!-- FOOTER -->
     <Style Selector="Border.FooterPanel">
         <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
         <Setter Property="Padding" Value="16"/>
     </Style>
 
-    <!-- OVERLAY -->
     <Style Selector="Border.LoadingOverlay">
         <Setter Property="Background" Value="{StaticResource OverlayBrush}"/>
     </Style>
 
-    <!-- BOTÓN MARCA -->
     <Style Selector="Button.BrandButton">
         <Setter Property="Background" Value="{StaticResource BrandBrush}"/>
         <Setter Property="Foreground" Value="White"/>
@@ -90,7 +90,6 @@
         <Setter Property="Padding" Value="24,0"/>
     </Style>
 
-    <!-- BOTÓN PELIGRO -->
     <Style Selector="Button.DangerButton">
         <Setter Property="Background" Value="{StaticResource DangerBrush}"/>
         <Setter Property="Foreground" Value="White"/>
@@ -98,23 +97,33 @@
         <Setter Property="Padding" Value="24,0"/>
     </Style>
 
-    <!-- BOTÓN NORMAL -->
+    <Style Selector="Button.SaleButton">
+        <Setter Property="Background" Value="{StaticResource SaleBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="24,0"/>
+    </Style>
+
+    <Style Selector="Button.InfoButton">
+        <Setter Property="Background" Value="{StaticResource InfoBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="24,0"/>
+    </Style>
+
     <Style Selector="Button.StandardButton">
         <Setter Property="Height" Value="40"/>
         <Setter Property="Padding" Value="24,0"/>
     </Style>
 
-    <!-- TÍTULO -->
     <Style Selector="TextBlock.SectionTitle">
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
-    <!-- LABEL -->
     <Style Selector="TextBlock.FieldLabel">
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Margin" Value="0,0,0,2"/>
     </Style>
-
 </Styles>

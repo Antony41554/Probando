@@ -44,6 +44,10 @@ namespace TeejoshSystem.Application.Ports.Inbound.Productos.Commands.CrearProduc
             {
                 return Result.Failure(ex.Message);
             }
+            catch (InvalidOperationException ex)
+            {
+                return Result.Failure(ex.Message);
+            }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);

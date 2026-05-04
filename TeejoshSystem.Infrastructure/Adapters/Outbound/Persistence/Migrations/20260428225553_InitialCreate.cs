@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -65,6 +66,20 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_product", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "sale",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    total = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_sale", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -215,6 +230,29 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "sale_detail",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    sale_id = table.Column<int>(type: "INTEGER", nullable: false),
+                    product_id = table.Column<int>(type: "INTEGER", nullable: false),
+                    product_name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    unit_price = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_sale_detail", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_sale_detail_sale_sale_id",
+                        column: x => x.sale_id,
+                        principalTable: "sale",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "funko_special_feature",
                 columns: new[] { "id", "name" },
@@ -343,6 +381,11 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_sale_detail_sale_id",
+                table: "sale_detail",
+                column: "sale_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tcg_expansion_name_FranquiciaId",
                 table: "tcg_expansion",
                 columns: new[] { "name", "FranquiciaId" },
@@ -380,6 +423,9 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
                 name: "hot_wheels_category");
 
             migrationBuilder.DropTable(
+                name: "sale_detail");
+
+            migrationBuilder.DropTable(
                 name: "tcg");
 
             migrationBuilder.DropTable(
@@ -396,6 +442,9 @@ namespace TeejoshSystem.Infrastructure.Adapters.Outbound.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "varios");
+
+            migrationBuilder.DropTable(
+                name: "sale");
 
             migrationBuilder.DropTable(
                 name: "product");

@@ -6,18 +6,13 @@
              x:DataType="vm:CrearProductoViewModel">
 
     <Grid RowDefinitions="Auto,*,Auto">
-
-        <!-- Header -->
         <Border Grid.Row="0" Classes="PageHeader">
             <TextBlock Text="Crear Producto"/>
         </Border>
 
-        <!-- Formulario -->
         <ScrollViewer Grid.Row="1" Margin="16">
             <Border Classes="ContentPanel">
                 <StackPanel Margin="24" Spacing="16">
-
-                    <!-- ═══ Resumen de errores (sólo visible cuando HasErrors) ═══ -->
                     <Border IsVisible="{Binding HasErrors}"
                             Background="{StaticResource ErrorBackgroundBrush}"
                             CornerRadius="4"
@@ -38,10 +33,8 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ═══ Datos Generales ═══ -->
                     <TextBlock Classes="SectionTitle" Text="Datos Generales"/>
 
-                    <!-- Tipo -->
                     <StackPanel Spacing="4">
                         <TextBlock Classes="FieldLabel" Text="Tipo de producto"/>
                         <ComboBox ItemsSource="{Binding TiposDisponibles}"
@@ -50,7 +43,6 @@
                                   HorizontalAlignment="Stretch"/>
                     </StackPanel>
 
-                    <!-- Nombre -->
                     <StackPanel Spacing="4">
                         <TextBlock Classes="FieldLabel" Text="Nombre"/>
                         <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
@@ -64,7 +56,6 @@
                                    IsVisible="{Binding NombreValidation.HasError}"/>
                     </StackPanel>
 
-                    <!-- Precio y Unidades -->
                     <Grid ColumnDefinitions="*,16,*">
                         <StackPanel Grid.Column="0" Spacing="4">
                             <TextBlock Classes="FieldLabel" Text="Precio"/>
@@ -93,7 +84,6 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- ═══ Panel Hot Wheels ═══ -->
                     <StackPanel Spacing="16" IsVisible="{Binding MostrarHotWheels}">
                         <TextBlock Classes="SectionTitle" Text="Detalles Hot Wheels"/>
 
@@ -112,7 +102,7 @@
 
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
-                                <TextBlock Classes="FieldLabel" Text="Año"/>
+                                <TextBlock Classes="FieldLabel" Text="Anio"/>
                                 <TextBox Text="{Binding HwAnioTexto, UpdateSourceTrigger=PropertyChanged}"
                                          Watermark="Ej: 2024"
                                          validation:ValidationField.FieldName="HwAnioTexto"
@@ -138,7 +128,7 @@
                         </Grid>
 
                         <StackPanel Spacing="4">
-                            <TextBlock Classes="FieldLabel" Text="Categoría"/>
+                            <TextBlock Classes="FieldLabel" Text="Categoria"/>
                             <ComboBox ItemsSource="{Binding CategoriasHotWheels}"
                                       SelectedItem="{Binding HwCategoriaSeleccionada}"
                                       DisplayMemberBinding="{Binding Nombre}"
@@ -146,13 +136,12 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- ═══ Panel Funko ═══ -->
                     <StackPanel Spacing="16" IsVisible="{Binding MostrarFunko}">
                         <TextBlock Classes="SectionTitle" Text="Detalles Funko"/>
 
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
-                                <TextBlock Classes="FieldLabel" Text="Número de caja"/>
+                                <TextBlock Classes="FieldLabel" Text="Numero de caja"/>
                                 <TextBox Text="{Binding FunkoNumeroBoxTexto, UpdateSourceTrigger=PropertyChanged}"
                                          Watermark="Ej: 123"
                                          validation:ValidationField.FieldName="FunkoNumeroBoxTexto"
@@ -186,7 +175,7 @@
                         </StackPanel>
 
                         <StackPanel Spacing="4">
-                            <TextBlock Classes="FieldLabel" Text="Característica especial (opcional)"/>
+                            <TextBlock Classes="FieldLabel" Text="Caracteristica especial (opcional)"/>
                             <ComboBox ItemsSource="{Binding CaracteristicasFunko}"
                                       SelectedItem="{Binding FunkoCaracteristicaSeleccionada}"
                                       DisplayMemberBinding="{Binding Nombre}"
@@ -194,7 +183,6 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- ═══ Panel TCG ═══ -->
                     <StackPanel Spacing="16" IsVisible="{Binding MostrarTcg}">
                         <TextBlock Classes="SectionTitle" Text="Detalles TCG"/>
 
@@ -208,7 +196,7 @@
 
                         <Grid ColumnDefinitions="*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
-                                <TextBlock Classes="FieldLabel" Text="Expansión"/>
+                                <TextBlock Classes="FieldLabel" Text="Expansion"/>
                                 <ComboBox ItemsSource="{Binding TcgExpansionesDisponibles}"
                                           SelectedItem="{Binding TcgExpansionSeleccionada}"
                                           DisplayMemberBinding="{Binding Nombre}"
@@ -224,13 +212,12 @@
                         </Grid>
                     </StackPanel>
 
-                    <!-- ═══ Panel Toy ═══ -->
                     <StackPanel Spacing="16" IsVisible="{Binding MostrarToy}">
                         <TextBlock Classes="SectionTitle" Text="Detalles Toy"/>
 
                         <Grid ColumnDefinitions="*,16,*,16,*">
                             <StackPanel Grid.Column="0" Spacing="4">
-                                <TextBlock Classes="FieldLabel" Text="Edad mínima"/>
+                                <TextBlock Classes="FieldLabel" Text="Edad minima"/>
                                 <TextBox Text="{Binding ToyEdadMinimaTexto, UpdateSourceTrigger=PropertyChanged}"
                                          Watermark="Ej: 8"
                                          validation:ValidationField.FieldName="ToyEdadMinimaTexto"
@@ -242,7 +229,7 @@
                                            IsVisible="{Binding ToyEdadMinimaValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Spacing="4">
-                                <TextBlock Classes="FieldLabel" Text="Jugadores mín."/>
+                                <TextBlock Classes="FieldLabel" Text="Jugadores min."/>
                                 <TextBox Text="{Binding ToyJugadoresMinTexto, UpdateSourceTrigger=PropertyChanged}"
                                          Watermark="Ej: 1"
                                          validation:ValidationField.FieldName="ToyJugadoresMinTexto"
@@ -254,7 +241,7 @@
                                            IsVisible="{Binding ToyJugadoresMinValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="4" Spacing="4">
-                                <TextBlock Classes="FieldLabel" Text="Jugadores máx."/>
+                                <TextBlock Classes="FieldLabel" Text="Jugadores max."/>
                                 <TextBox Text="{Binding ToyJugadoresMaxTexto, UpdateSourceTrigger=PropertyChanged}"
                                          Watermark="Ej: 4"
                                          validation:ValidationField.FieldName="ToyJugadoresMaxTexto"
@@ -271,7 +258,6 @@
                                   IsChecked="{Binding ToyEsJuegoMesa}"/>
                     </StackPanel>
 
-                    <!-- ═══ Panel Varios ═══ -->
                     <StackPanel Spacing="16" IsVisible="{Binding MostrarVarios}">
                         <TextBlock Classes="SectionTitle" Text="Detalles Varios"/>
 
@@ -291,7 +277,7 @@
                             <StackPanel Grid.Column="2" Spacing="4">
                                 <TextBlock Classes="FieldLabel" Text="Material"/>
                                 <TextBox Text="{Binding VariosMaterial, UpdateSourceTrigger=PropertyChanged}"
-                                         Watermark="Ej: Plástico"
+                                         Watermark="Ej: Plastico"
                                          validation:ValidationField.FieldName="VariosMaterial"
                                          validation:ValidationField.ValidateCommand="{Binding ValidarCampoCommand}"
                                          validation:ValidationField.ClearCommand="{Binding LimpiarValidacionCampoCommand}"
@@ -328,7 +314,7 @@
                                            IsVisible="{Binding VariosAnchoValidation.HasError}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="4" Spacing="4">
-                                <TextBlock Classes="FieldLabel" Text="Largo (cm) — opcional"/>
+                                <TextBlock Classes="FieldLabel" Text="Largo (cm) - opcional"/>
                                 <TextBox Text="{Binding VariosLargoTexto, UpdateSourceTrigger=PropertyChanged}"
                                          Watermark="Opcional"
                                          validation:ValidationField.FieldName="VariosLargoTexto"
@@ -341,15 +327,13 @@
                             </StackPanel>
                         </Grid>
 
-                        <CheckBox Content="Tiene ilustración"
+                        <CheckBox Content="Tiene ilustracion"
                                   IsChecked="{Binding VariosTieneIlustracion}"/>
                     </StackPanel>
-
                 </StackPanel>
             </Border>
         </ScrollViewer>
 
-        <!-- Footer -->
         <Border Grid.Row="2" Margin="16,0,16,16" Classes="FooterPanel">
             <Grid ColumnDefinitions="*,Auto,8,Auto">
                 <Button Grid.Column="1"
@@ -363,7 +347,6 @@
             </Grid>
         </Border>
 
-        <!-- Loading Overlay -->
         <Border Grid.RowSpan="3"
                 Classes="LoadingOverlay"
                 IsVisible="{Binding IsBusy}">
@@ -375,6 +358,5 @@
                            HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
-
     </Grid>
 </UserControl>
